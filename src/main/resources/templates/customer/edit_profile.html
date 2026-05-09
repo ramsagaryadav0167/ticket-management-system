@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/customer-layout}">
+<head>
+    <title>Edit Profile</title>
+    <link rel="stylesheet" th:href="@{/css/customer-style.css}">
+    <style>
+        /* Removed card-style container */
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            padding: 60px 20px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+            font-size: 28px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            max-width: 700px;
+            margin: 0 auto 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #2c3e50;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        .btn-submit {
+            display: block;
+            max-width: 700px;
+            margin: 30px auto 0;
+            padding: 12px;
+            background-color: #3498db;
+            color: white;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-submit:hover {
+            background-color: #217dbb;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .success-message {
+            text-align: center;
+            color: green;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+<div layout:fragment="content">
+    <h2>✏️ Edit My Profile</h2>
+
+    <!-- Show success message -->
+    <div th:if="${success}" class="success-message" th:text="${success}"></div>
+
+    <form th:action="@{/customer/profile}" method="post" th:object="${user}">
+        <div class="form-group">
+            <label for="fullName">Full Name</label>
+            <input type="text" id="fullName" th:field="*{fullName}" required />
+        </div>
+
+        <div class="form-group">
+            <label for="phone">Phone</label>
+            <input type="tel" id="phone" th:field="*{phone}" required />
+        </div>
+
+        <div class="form-group">
+            <label for="gender">Gender</label>
+            <select id="gender" th:field="*{gender}">
+                <option value="" disabled>Select Gender</option>
+                <option value="Male" th:selected="${user.gender == 'Male'}">Male</option>
+                <option value="Female" th:selected="${user.gender == 'Female'}">Female</option>
+                <option value="Other" th:selected="${user.gender == 'Other'}">Other</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="address">Address</label>
+            <textarea id="address" rows="3" th:field="*{address}"></textarea>
+        </div>
+
+        <button type="submit" class="btn-submit">Update Profile</button>
+    </form>
+
+    <a class="back-link" th:href="@{/customer/profile}">← Back to My Profile</a>
+</div>
+</body>
+</html>

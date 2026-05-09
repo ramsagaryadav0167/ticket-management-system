@@ -1,0 +1,122 @@
+<!-- File: templates/user-support-chat.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/user-layout}">
+<head>
+    <title>Support Chat</title>
+        <style>
+        .chat-container {
+            background-color: #ffffff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .chat-box {
+            display: flex;
+            flex-direction: column;
+            height: 500px;
+        }
+
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 15px;
+            border-radius: 6px;
+            background-color: #f9f9f9;
+            margin-bottom: 15px;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #eaf4ff;
+            border-radius: 8px;
+        }
+
+        .message strong {
+            color: #007BFF;
+        }
+
+        .timestamp {
+            font-size: 12px;
+            color: #888;
+            margin-top: 5px;
+        }
+
+        .chat-form {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-form input[type="text"] {
+            flex: 1;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+
+        .chat-form button {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .chat-form button:hover {
+            background-color: #0056b3;
+        }
+
+        @media (max-width: 768px) {
+            .chat-container {
+                padding: 15px;
+                margin: 0 10px;
+            }
+
+            .chat-box {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="welcome-section">
+        <p>Welcome to Support Chat, <span th:text="${username}">Guest</span>!</p>
+    </div>
+
+    <h2>Support Chat</h2>
+
+    <div class="chat-container">
+        <div class="chat-box">
+            <div class="messages" id="chatMessages">
+                <!-- Loop through chat messages -->
+               <div th:each="msg : ${messages}" class="message">
+    				<strong th:text="${msg.sender}">User</strong>: <span th:text="${msg.content}">Hello</span>
+    				<div class="timestamp" th:text="${#temporals.format(msg.timestamp, 'dd MMM yyyy HH:mm')}">timestamp</div>
+
+    				<!-- ✅ Delete button (always shown; you can add condition later for security) -->
+    				<form th:action="@{/support/delete/{id}(id=${msg.id})}" method="post" style="margin-top: 5px;">
+        				<button type="submit" class="delete-button">Delete</button>
+    				</form>
+				</div>
+
+            </div>
+         <form th:action="@{/support/user/send}" method="post" th:object="${newMessage}" class="chat-form">
+    		<input type="text" th:field="*{content}" placeholder="Type your message..." required>
+    		<button type="submit">Send</button>
+		</form>
+
+        </div>
+    </div>
+</div>
+</body>
+</html>

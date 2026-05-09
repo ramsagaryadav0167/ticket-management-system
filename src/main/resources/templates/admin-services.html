@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/admin-layout}">
+
+<head>
+    <title>Service Requests</title>
+    <link rel="stylesheet" th:href="@{/css/admin-style.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+
+<!-- ✅ Inject only main content into admin layout -->
+<div layout:fragment="content" class="main-content">
+    <div class="card">
+
+        <!-- ✅ Success Message -->
+        <div th:if="${success}" class="success-message">
+            <i class="fas fa-check-circle"></i> <span th:text="${success}">Service deleted successfully.</span>
+        </div>
+
+        <h2><i class="fas fa-cogs"></i> All Submitted Services</h2>
+
+        <div th:if="${#lists.isEmpty(services)}">
+            <p>No services submitted yet.</p>
+        </div>
+
+        <div th:each="s : ${services}" class="service-card">
+            <h3><i class="fas fa-wrench"></i> 
+                <span th:text="${s.serviceName}">Service Name</span>
+            </h3>
+            <p><strong>Description:</strong> <span th:text="${s.description}">Description here...</span></p>
+
+            <p th:if="${s.user != null}">
+                <strong>Submitted By:</strong> 
+                <span th:text="${s.user.fullName}">User Name</span> 
+                (<span th:text="${s.user.username}">username</span>) -
+                <span th:text="${s.user.email}">user@example.com</span>
+            </p>
+            <p th:if="${s.user == null}">Submitted by: Unknown</p>
+
+            <!-- ✅ Delete Button -->
+            <form th:action="@{'/admin/services/delete/' + ${s.id}}" th:method="post" style="margin-top: 10px;">
+                <button type="submit" class="logout-button" style="background-color: #e74c3c;">
+                    <i class="fas fa-trash"></i> Delete
+                </button>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

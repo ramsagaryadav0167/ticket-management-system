@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/admin-layout}">
+
+<head>
+    <title>Finance Department</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/css/admin-style.css}">
+</head>
+
+<body>
+
+<!-- ✅ Set Navbar Page Title -->
+<th:block layout:fragment="pageTitle">
+    <h1><i class="fas fa-building"></i> Finance Department</h1>
+</th:block>
+
+<!-- ✅ MAIN CONTENT -->
+<div layout:fragment="content" class="main-content">
+
+    <div class="card">
+        <h2>Finance Department</h2>
+        <p>This is the Finance Department page. Here you can view and manage finance-related tickets.</p>
+        <a th:href="@{/admin/manage-departments}" class="button">← Back to Departments</a>
+    </div>
+
+</div>
+
+</body>
+</html>

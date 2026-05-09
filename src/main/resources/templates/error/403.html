@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>403 - Access Denied</title>
+    <link rel="stylesheet" th:href="@{/css/customer-style.css}">
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f8f9fa;
+            color: #2c3e50;
+            margin: 0;
+            padding: 0;
+        }
+
+        .error-container {
+            text-align: center;
+            padding: 100px 20px;
+        }
+
+        .error-container h1 {
+            font-size: 60px;
+            color: #e74c3c;
+            margin-bottom: 20px;
+        }
+
+        .error-container p {
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+
+        .error-container a {
+            display: inline-block;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .error-container a:hover {
+            background-color: #2980b9;
+        }
+
+        @media (max-width: 768px) {
+            .error-container h1 {
+                font-size: 42px;
+            }
+
+            .error-container p {
+                font-size: 16px;
+            }
+
+            .error-container a {
+                font-size: 14px;
+                padding: 10px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <h1>403</h1>
+        <p>🚫 Access Denied - You do not have permission to view this page.</p>
+        <a th:href="@{/login}">🔐 Back to Login</a>
+    </div>
+</body>
+</html>

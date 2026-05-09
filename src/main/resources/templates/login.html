@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f7f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .login-form {
+            background-color: #fff;
+            padding: 2rem 3rem;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 350px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-top: 1rem;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="email"] {
+            width: 100%;
+            padding: 0.6rem;
+            margin-top: 0.3rem;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        button {
+            width: 100%;
+            padding: 0.8rem;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            margin-top: 1.5rem;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .error {
+            color: red;
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        .message {
+            color: green;
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        .signup-link {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .signup-link a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .signup-link a:hover {
+            text-decoration: underline;
+        }
+
+        .toggle-forgot {
+            text-align: right;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .toggle-forgot a {
+            color: #007bff;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .toggle-forgot a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<div class="login-form">
+    <h2>Login</h2>
+
+    <!-- ✅ Login form -->
+    <form th:action="@{/perform_login}" method="post" id="loginForm">
+        <label for="username">User Name</label>
+        <input type="text" name="username" placeholder="Enter your User ID" required>
+
+        <label for="password">Password</label>
+        <input type="password" name="password" placeholder="Enter your password" required>
+
+        <div class="toggle-forgot">
+            <a onclick="toggleForgot()">Forgot Password?</a>
+        </div>
+
+        <button type="submit">Login</button>
+
+        <div class="error" th:if="${param.error}">
+            Invalid User ID or password.
+        </div>
+    </form>
+
+    <!-- 🔐 Forgot Password Section -->
+    <div id="forgotForm" class="forgot-section" style="display:none;">
+        <form th:action="@{/forgot-password}" method="post">
+            <label for="email">Registered Email</label>
+            <input type="email" name="email" placeholder="Enter your registered email" required>
+
+            <div class="toggle-forgot">
+                <a onclick="toggleLogin()">Back to Login</a>
+            </div>
+
+            <button type="submit">Send Reset Link</button>
+
+            <div class="error" th:if="${error}" th:text="${error}"></div>
+            <div class="message" th:if="${message}" th:text="${message}"></div>
+        </form>
+    </div>
+
+    <div class="signup-link">
+        Don't have an account? <a th:href="@{/register/customer}">Sign up</a>
+    </div>
+</div>
+
+<script>
+    function toggleForgot() {
+        document.getElementById("loginForm").style.display = "none";
+        document.getElementById("forgotForm").style.display = "block";
+    }
+
+    function toggleLogin() {
+        document.getElementById("forgotForm").style.display = "none";
+        document.getElementById("loginForm").style.display = "block";
+    }
+</script>
+</body>
+</html>

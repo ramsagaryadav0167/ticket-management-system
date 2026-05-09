@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/customer-layout}">
+
+<head>
+    <title>Services</title>
+    <link rel="stylesheet" th:href="@{/css/customer-style.css}">
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .main-content {
+        	margin-top:10px;
+            margin-left: 250px; /* Adjust if your sidebar width is different */
+            padding: 40px;
+            padding-top: 100px; /* Give space from fixed nav if any */
+        }
+
+        h2 {
+            font-size: 30px;
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 40px;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+        }
+
+        .dashboard-card {
+            background-color: #ffffff;
+            padding: 25px 20px;
+            border-radius: 12px;
+            text-align: center;
+            transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+        }
+
+        .dashboard-card:hover {
+            background-color: #eaf4ff;
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        }
+
+        .dashboard-card i {
+            font-size: 34px;
+            color: #3498db;
+            margin-bottom: 15px;
+        }
+
+        .dashboard-card p {
+            font-size: 15px;
+            color: #34495e;
+            margin: 5px 0;
+        }
+
+        .dashboard-card p strong {
+            display: block;
+            font-size: 16px;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .button-bar {
+            margin-top: 50px;
+            text-align: center;
+        }
+
+        .button-bar a {
+            display: inline-block;
+            margin: 10px 15px;
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+        .button-bar a:hover {
+            background-color: #2980b9;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .card-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h2 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div layout:fragment="content" class="main-content">
+    <h2><i class="fas fa-concierge-bell"></i> Our Services</h2>
+
+    <div class="card-grid">
+        <div class="dashboard-card">
+            <i class="fas fa-ticket-alt"></i>
+            <p><strong>Easy Ticket Creation</strong></p>
+            <p>Raise tickets quickly for issues or service requests.</p>
+        </div>
+
+        <div class="dashboard-card">
+            <i class="fas fa-edit"></i>
+            <p><strong>Edit & Update Tickets</strong></p>
+            <p>Update your ticket status or details anytime.</p>
+        </div>
+
+        <div class="dashboard-card">
+            <i class="fas fa-history"></i>
+            <p><strong>Ticket History & Logs</strong></p>
+            <p>Track every change made to a ticket in real time.</p>
+        </div>
+
+        <div class="dashboard-card">
+            <i class="fas fa-user-cog"></i>
+            <p><strong>User Profile Management</strong></p>
+            <p>Update personal details and manage credentials.</p>
+        </div>
+
+        <div class="dashboard-card">
+            <i class="fas fa-question-circle"></i>
+            <p><strong>Help & Support</strong></p>
+            <p>Access FAQs or chat with support.</p>
+        </div>
+
+        <div class="dashboard-card">
+            <i class="fas fa-chart-line"></i>
+            <p><strong>Reports & Analytics</strong></p>
+            <p>Get detailed insights on ticket activity.</p>
+        </div>
+
+        <div class="dashboard-card">
+            <i class="fas fa-envelope"></i>
+            <p><strong>Announcements</strong></p>
+            <p>Receive updates and broadcast alerts.</p>
+        </div>
+
+        <div class="dashboard-card">
+            <i class="fas fa-cogs"></i>
+            <p><strong>Advanced Settings</strong></p>
+            <p>Customize preferences and workflows.</p>
+        </div>
+    </div>
+
+    <!-- <div class="button-bar">
+        <a th:href="@{/create_ticket}"><i class="fas fa-plus-circle"></i> Create Ticket</a>
+        <a th:href="@{/dashboard}"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+    </div> -->
+</div>
+</body>
+</html>

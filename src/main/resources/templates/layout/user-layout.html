@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+
+    <!-- 🔤 Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <!-- 🌐 Page Title with Layout Pattern -->
+    <title layout:title-pattern="$CONTENT_TITLE - Ticket System">User - Ticket Management System</title>
+
+    <!-- 🎨 FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <!-- 🎨 Custom CSS -->
+    <link rel="stylesheet" th:href="@{/css/user-style.css}">
+</head>
+
+<body>
+
+<!-- 🔲 Page Wrapper (Sticky Footer Layout) -->
+<div class="main-wrapper">
+
+    <!-- 🔝 Navbar -->
+    <div class="navbar">
+        <h1><i class="fas fa-ticket-alt"></i> Ticket Management System</h1>
+        <div class="user-info">
+            <a th:href="@{/user/profile}" class="profile-button">
+                <i class="fas fa-user-cog"></i>
+            </a>
+            <a th:href="@{/logout}" class="logout-button">
+                <i class="fas fa-sign-out-alt"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- 📚 Sidebar Navigation -->
+    <div class="sidebar">
+        <a th:href="@{/user/dashboard}"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+        <a th:href="@{/user/create_ticket}"><i class="fas fa-plus-circle"></i> Create Ticket</a>
+        <a th:href="@{/user/view_tickets}"><i class="fas fa-list"></i> View Tickets</a>
+        <a th:href="@{/user/services}"><i class="fas fa-tools"></i> Our Services</a>
+        <a th:href="@{/user/help}"><i class="fas fa-question-circle"></i> Help</a>
+        <a th:href="@{/user/profile}"><i class="fas fa-user-circle"></i> Profile</a>
+        <a th:href="@{/change-password}"><i class="fas fa-key"></i> Change Password</a>
+    </div>
+
+    <!-- 📄 Main Content Area (Dynamic with Thymeleaf) -->
+    <div class="main-content" layout:fragment="content">
+        <!-- Page-specific content will be inserted here -->
+    </div>
+
+    <!-- 📎 Footer -->
+    <footer>
+        <p>© 2025 Ticket Management System | All rights reserved.</p>
+    </footer>
+</div>
+
+<!-- 💬 Floating Chat Box -->
+<div id="chat-box" style="display:none; position:fixed; bottom:80px; right:20px; width:300px; height:430px; background:#fff; border:1px solid #ccc; border-radius:8px; box-shadow:0 0 10px rgba(0,0,0,0.3); z-index:9999;">
+    <div style="background:#28a745; color:white; padding:10px;">Support Chat</div>
+
+    <!-- 👤 Chat Dropdown (User Select) -->
+    <div style="padding:10px;">
+        <select id="chat-user-select" onchange="changeChatUser()" style="width:100%; padding:5px;">
+            <option value="">-- Select Customer --</option>
+        </select>
+    </div>
+
+    <!-- 💬 Chat Message List -->
+    <div id="chat-messages" style="height:250px; overflow-y:auto; padding:10px;"></div>
+
+    <!-- ✏️ Input & Send Button -->
+    <div style="padding:10px;">
+        <input type="text" id="chat-input" placeholder="Type a message..." style="width:75%; padding:5px;" />
+        <button onclick="sendMessage()" style="padding:5px 10px;">Send</button>
+    </div>
+</div>
+
+<!-- 🔘 Floating Chat Toggle Button -->
+<div id="chat-button" style="position:fixed; bottom:20px; right:20px; z-index:9999;">
+    <button onclick="toggleChat()" style="background:#007bff; border:none; border-radius:30px; padding:12px 18px; color:white; font-size:16px; display:flex; align-items:center; gap:8px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); position:relative;">
+        <i class="fas fa-comments"></i> <span>Support Chat</span>
+        <span id="chat-badge" style="display:none; position:absolute; top:5px; right:5px; background:red; border-radius:50%; width:10px; height:10px;"></span>
+    </button>
+</div>
+
+<!-- ✅ Sidebar Active Link Highlighter -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const currentPath = window.location.pathname;
+        document.querySelectorAll(".sidebar a").forEach(link => {
+            const linkPath = link.getAttribute("href");
+
+            if (!linkPath || linkPath.startsWith("javascript")) return;
+
+            if (currentPath === linkPath || currentPath.startsWith(linkPath)) {
+                link.classList.add("active");
+            }
+        });
+    });
+</script>
+
+<!-- 💬 Support Chat Scripts -->
+<script>
+    let chatUserId = null;
+    let lastMessageCount = 0;
+    let pollingInterval;
+
+    // 🔄 Toggle Chat Box Visibility
+    function toggleChat() {
+        const chatBox = document.getElementById("chat-box");
+        chatBox.style.display = (chatBox.style.display === "none") ? "block" : "none";
+
+        if (chatBox.style.display === "block") {
+            loadUserList();
+            hideChatBadge();
+        } else {
+            clearInterval(pollingInterval);
+        }
+    }
+
+    // 📥 Load Chat User List
+    function loadUserList() {
+        fetch("/user/chat/admin")
+            .then(res => res.json())
+            .then(users => {
+                const select = document.getElementById("chat-user-select");
+                select.innerHTML = '<option value="">-- Select Customer --</option>';
+                users.forEach(user => {
+                    const option = document.createElement("option");
+                    option.value = user.id;
+                    option.textContent = user.name;
+                    select.appendChild(option);
+                });
+            });
+    }
+
+    // 🔁 Change Chat User & Start Polling
+    function changeChatUser() {
+        chatUserId = document.getElementById("chat-user-select").value;
+        if (chatUserId) {
+            loadMessages();
+            startPolling();
+        } else {
+            clearInterval(pollingInterval);
+        }
+    }
+
+    // 📩 Load Chat Messages
+    function loadMessages() {
+        if (!chatUserId) return;
+
+        fetch(`/user/chat/messages/${chatUserId}`)
+            .then(res => res.json())
+            .then(data => {
+                const msgBox = document.getElementById("chat-messages");
+                msgBox.innerHTML = "";
+
+                data.forEach(msg => {
+                    msgBox.innerHTML += `<div><strong>${msg.sender.name}:</strong> ${msg.message}</div>`;
+                });
+
+                msgBox.scrollTop = msgBox.scrollHeight;
+
+                if (data.length > lastMessageCount && document.getElementById("chat-box").style.display === "none") {
+                    showChatBadge();
+                }
+
+                lastMessageCount = data.length;
+            });
+    }
+
+    // 📤 Send New Message
+    function sendMessage() {
+        const input = document.getElementById("chat-input");
+        const msg = input.value.trim();
+        if (msg === "" || !chatUserId) return;
+
+        fetch(`/user/chat/send?toId=${chatUserId}&message=${msg}`, {
+            method: 'POST'
+        }).then(() => {
+            input.value = "";
+            loadMessages();
+        });
+    }
+
+    // 🔃 Auto Polling for New Messages
+    function startPolling() {
+        clearInterval(pollingInterval);
+        pollingInterval = setInterval(loadMessages, 10000);
+    }
+
+    // 🔔 Show Unread Badge
+    function showChatBadge() {
+        const badge = document.getElementById("chat-badge");
+        if (badge) badge.style.display = "inline-block";
+    }
+
+    // 🚫 Hide Unread Badge
+    function hideChatBadge() {
+        const badge = document.getElementById("chat-badge");
+        if (badge) badge.style.display = "none";
+    }
+</script>
+
+</body>
+</html>

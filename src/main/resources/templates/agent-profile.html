@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout/admin-layout}">
+<head><title>Agent Profile</title></head>
+<body>
+<div layout:fragment="content">
+    <h2>Agent Profile</h2>
+    <p><b>Name:</b> <span th:text="${agent.fullName}"/></p>
+    <p><b>Email:</b> <span th:text="${agent.email}"/></p>
+    <p><b>Phone:</b> <span th:text="${agent.phone}"/></p>
+    <p><b>Role:</b> <span th:text="${agent.role}"/></p>
+</div>
+</body>
+</html>

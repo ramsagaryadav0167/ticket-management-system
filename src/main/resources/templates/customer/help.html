@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/customer-layout}">
+
+<head>
+    <title>Customer Help</title>
+    <link rel="stylesheet" th:href="@{/css/customer-style.css}">
+    <style>
+        .main-content {
+            max-width: 1500px;
+            margin: 120px auto;
+            background: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        h2 {
+            font-size: 28px;
+            margin-bottom: 30px;
+            text-align: center;
+            color: #2c3e50;
+        }
+
+        form.card {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        form.card label {
+            font-weight: 600;
+            margin-bottom: 5px;
+            display: block;
+            color: #2c3e50;
+        }
+
+        form.card input,
+        form.card select,
+        form.card textarea {
+            width: 100%;
+            padding: 10px;
+            font-size: 15px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+        }
+
+        form.card textarea {
+            grid-column: span 2;
+            resize: vertical;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+        .primary-btn {
+            grid-column: span 2;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .primary-btn:hover {
+            background-color: #2980b9;
+        }
+
+        .success-message {
+            margin-top: 25px;
+            text-align: center;
+            color: green;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        @media (max-width: 768px) {
+            form.card {
+                grid-template-columns: 1fr;
+            }
+
+            .primary-btn {
+                grid-column: span 1;
+            }
+
+            textarea {
+                grid-column: span 1 !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<!-- MAIN CONTENT -->
+<div layout:fragment="content" class="main-content">
+    <h2><i class="fas fa-life-ring"></i> Help & Support</h2>
+
+    <form th:action="@{/help}" th:object="${helpRequest}" method="post" class="card">
+
+        <div class="form-group">
+            <label for="name">Your Name:</label>
+            <input type="text" th:field="*{name}" id="name" placeholder="Enter your name" required>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email Address:</label>
+            <input type="email" th:field="*{email}" id="email" placeholder="example@email.com" required>
+        </div>
+
+        <div class="form-group">
+            <label for="number">Phone Number:</label>
+            <input type="text" th:field="*{number}" id="number" placeholder="1234567890" required>
+        </div>
+
+        <div class="form-group">
+            <label for="issueDate">Issue Date:</label>
+            <input type="date" th:field="*{issueDate}" id="issueDate" required>
+        </div>
+
+        <div class="form-group">
+            <label for="category">Issue Category:</label>
+            <select th:field="*{category}" id="category" required>
+                <option value="">--Select--</option>
+                <option value="Technical">Technical</option>
+                <option value="Billing">Billing</option>
+                <option value="General">General</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="priority">Priority:</label>
+            <select th:field="*{priority}" id="priority" required>
+                <option value="">--Select--</option>
+                <option value="Low">Low</option>
+                <option value="Medium">Medium</option>
+                <option value="High">High</option>
+            </select>
+        </div>
+
+        <div class="form-group full-width">
+            <label for="subject">Subject:</label>
+            <input type="text" th:field="*{subject}" id="subject" placeholder="Enter subject" required>
+        </div>
+
+        <div class="form-group full-width">
+            <label for="message">Message:</label>
+            <textarea th:field="*{message}" id="message" rows="5" placeholder="Describe your issue..." required></textarea>
+        </div>
+
+        <button type="submit" class="primary-btn">
+            <i class="fas fa-paper-plane"></i> Submit Request
+        </button>
+    </form>
+
+    <!-- SUCCESS MESSAGE -->
+    <div th:if="${param.success}" class="success-message">
+        ✅ Thank you! Your request has been submitted successfully.
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/user-layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Profile</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <!-- Your own page-specific styles -->
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7fa;
+        }
+
+        .container {
+            margin-left: 220px;
+            margin-top: 100px;
+            max-width: 600px;
+            padding: 40px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        button {
+            margin-top: 30px;
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin-left: 0;
+                margin-top: 140px;
+                padding: 30px;
+                width: 90%;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Insert main form into shared layout -->
+<div layout:fragment="content" class="main-content">
+    <div class="container">
+        <h2><i class="fas fa-user-edit"></i> Edit Profile</h2>
+
+        <form th:action="@{/user/profile/update}" th:object="${user}" method="post">
+
+            <label for="fullName"><i class="fas fa-user"></i> Full Name:</label>
+            <input type="text" id="fullName" th:field="*{fullName}" required />
+
+            <label for="phone"><i class="fas fa-phone"></i> Phone:</label>
+            <input type="text" id="phone" th:field="*{phone}" required />
+
+            <label for="gender"><i class="fas fa-venus-mars"></i> Gender:</label>
+            <select id="gender" th:field="*{gender}" required>
+                <option value="">--Select--</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+            </select>
+
+            <label for="address"><i class="fas fa-map-marker-alt"></i> Address:</label>
+            <input type="text" id="address" th:field="*{address}" required />
+
+            <button type="submit"><i class="fas fa-save"></i> Update</button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

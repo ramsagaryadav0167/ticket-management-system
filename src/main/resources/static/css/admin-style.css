@@ -1,0 +1,291 @@
+/* Box Sizing Reset */
+* {
+    box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Body */
+body {
+    margin: 0;
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #ecf0f3;
+    color: #2c3e50;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5 {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+/* Chat */
+#chat-messages {
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    font-size: 14px;
+}
+
+.my-msg {
+    background: #007bff;
+    color: white;
+    padding: 6px 10px;
+    margin: 5px;
+    border-radius: 10px;
+    text-align: right;
+}
+
+.their-msg {
+    background: #f1f1f1;
+    color: black;
+    padding: 6px 10px;
+    margin: 5px;
+    border-radius: 10px;
+    text-align: left;
+}
+
+/* Active Sidebar Link */
+.sidebar a.active {
+    background-color: #2980b9;
+    color: #fff;
+    font-weight: bold;
+}
+
+/* Admin Wrapper */
+.admin-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Navbar */
+.navbar {
+    background-color: #2c3e50;
+    padding: 18px 30px;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.navbar h1,
+.page-title {
+    color: white;
+    font-size: 20px;
+    margin: 0;
+}
+
+/* Admin Info Area */
+.admin-info {
+    display: flex !important;
+    align-items: center;
+    gap: 16px !important; /* Updated spacing between bell, avatar, logout */
+   
+}
+
+.admin-info a {
+    color: white;
+    font-size: 16px;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.admin-info a:hover {
+    color: #f1c40f;
+}
+
+.admin-info span {
+    font-size: 16px;
+    color: #fff;
+}
+
+/* Notification Bell */
+.notification-bell i {
+    font-size: 2rem;
+    cursor: pointer;
+    position: relative;
+   
+}
+
+/* Avatar */
+.avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #fff;
+   
+}
+
+/* Logout Button */
+.logout-button {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.logout-button:hover {
+    background-color: #c0392b;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 220px;
+    background: #34495e;
+    height: 100vh;
+    position: fixed;
+    top: 70px;
+    left: 0;
+    padding: 20px 15px;
+}
+
+.sidebar a {
+    padding: 12px 20px;
+    color: #ecf0f1;
+    text-decoration: none;
+    font-size: 16px;
+    margin-bottom: 12px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: background 0.3s ease, transform 0.2s ease;
+    border-left: 4px solid transparent;
+}
+
+.sidebar a i {
+    margin-right: 8px;
+}
+
+.sidebar a:hover {
+    background-color: #2980b9;
+    transform: translateX(4px);
+    border-left: 4px solid #ecf0f1;
+}
+
+/* Sidebar Toggle */
+.sidebar.collapsed {
+    width: 60px;
+}
+
+.sidebar.collapsed a {
+    text-align: center;
+    font-size: 0;
+}
+
+.sidebar.collapsed a i {
+    font-size: 18px;
+}
+
+.sidebar-toggle-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #fff;
+    margin-left: 10px;
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    margin-left: 240px;
+    margin-top: 80px;
+    padding: 30px;
+}
+
+/* Footer */
+.admin-footer {
+    background-color: #ffffff;
+    color: #2c3e50;
+    text-align: center;
+    padding: 15px;
+    font-size: 14px;
+    width: 100%;
+    border-top: 1px solid #ccc;
+    margin-top: auto;
+}
+
+/* Card */
+.card {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+    max-width: 1000px;
+    margin: auto;
+}
+
+.card h2 {
+    font-size: 24px;
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+
+/* Service Card */
+.service-card {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+}
+
+.service-card h3 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    color: #3498db;
+}
+
+.service-card p {
+    color: #555;
+    font-size: 15px;
+    margin: 5px 0;
+}
+
+/* Success Message */
+.success-message {
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: #d4edda;
+    color: #155724;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .sidebar {
+        display: none;
+    }
+
+    .main-content {
+        margin-left: 0;
+        margin-top: 120px;
+        padding: 20px;
+    }
+
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+}

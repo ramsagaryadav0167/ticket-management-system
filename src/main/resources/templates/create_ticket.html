@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/user-layout}">
+<head>
+    <title>Create Ticket</title>
+    <link rel="stylesheet" th:href="@{/css/user-style.css}">
+    <style type="text/css">
+        .main-content {
+            margin-left: 240px;
+            margin-top: 80px;
+            padding: 30px;
+        }
+        h2 {
+            color: #2c3e50;
+            text-align: center;
+            font-size: 26px;
+            margin-bottom: 25px;
+        }
+        form {
+            background-color: white;
+            padding: 35px 45px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            max-width: 800px;
+            margin: auto;
+        }
+        label {
+            display: block;
+            margin-top: 20px;
+            font-weight: 600;
+            color: #34495e;
+        }
+        .input-icon {
+            position: relative;
+        }
+        .input-icon i {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #3498db;
+        }
+        input[type="text"],
+        textarea,
+        select,
+        input[type="file"] {
+            width: 100%;
+            padding: 12px 15px 12px 35px;
+            margin-top: 8px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        input:focus,
+        textarea:focus,
+        select:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 6px rgba(52, 152, 219, 0.3);
+        }
+        button {
+            margin-top: 25px;
+            width: 100%;
+            background-color: #3498db;
+            color: white;
+            padding: 14px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        button:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+        .info {
+            font-size: 0.9em;
+            color: #7f8c8d;
+            margin-top: 10px;
+        }
+        .back-link {
+            display: block;
+            margin: 25px auto 0;
+            text-align: center;
+            color: #3498db;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            color: #21618c;
+            text-decoration: underline;
+        }
+        @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+                margin-top: 120px;
+                padding: 20px;
+            }
+            form {
+                padding: 20px;
+            }
+            h2 {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div layout:fragment="content" class="main-content">
+    <h2>🎫 Create New Ticket</h2>
+
+    <form th:action="@{/user/create_ticket}" th:object="${ticket}" method="post" enctype="multipart/form-data">
+		<!-- 🔹 Title -->
+		<label for="title">Title</label>
+		<div class="input-icon">
+		    <i class="fas fa-heading"></i>
+		    <input type="text" id="title" th:field="*{title}" required
+		           oninput="limitWords(this, 10, 'titleCount', 'title')" />
+		</div>
+		<small id="titleCount" class="text-muted">0 / 10 words</small>
+		<small id="titleAlert" class="text-danger" style="display: none; color: red;">Maximum 10 words allowed!</small>
+
+
+		<br/>
+		
+		
+<div>
+  <label for="description">Description</label>
+  <textarea id="description" th:field="*{description}" rows="4" required
+            oninput="limitWords(this, 100, 'descCount', 'desc')"></textarea>
+  <small id="descCount" class="text-muted">0 / 100 words</small><br>
+  <small id="descAlert" class="text-danger" style="display: none;">Maximum 100 words allowed!</small>
+</div>
+
+
+       
+
+        <label for="department">Assign Department</label>
+        <div class="input-icon">
+            <i class="fas fa-building"></i>
+            <select name="departmentId" required>
+                <option value="">-- Select Department --</option>
+                <option th:each="dept : ${departments}"
+                        th:value="${dept.id}"
+                        th:text="${dept.departmentName}">
+                </option>
+            </select>
+        </div>
+
+
+
+        <label for="status">Status</label>
+        <div class="input-icon">
+            <i class="fas fa-spinner"></i>
+            <select id="status" th:field="*{status}" required>
+                <option value="Open">Open</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Resolved">Resolved</option>
+            </select>
+        </div>
+        
+        <!-- Mobile Number -->
+			<label for="mobile">Mobile Number</label>
+			<input type="text" id="mobile" name="mobile" placeholder="+91 XXXXX XXXXX"
+			       maxlength="10" required>
+			
+			<script>
+			document.getElementById("mobile").addEventListener("input", function () {
+			    // Keep only digits
+			    this.value = this.value.replace(/[^0-9]/g, "");
+			
+			    // If starts with 0–5, clear the first digit
+			    if (this.value.length > 0 && !/^[6-9]/.test(this.value)) {
+			        this.value = this.value.substring(1);
+			    }
+			});
+			
+			// Form validation
+			function validateForm() {
+			    let mobile = document.getElementById("mobile").value;
+			    if (!/^[6-9][0-9]{9}$/.test(mobile)) {
+			        alert("Please enter a valid 10-digit mobile number starting with 6–9.");
+			        return false;
+			    }
+			    return true;
+			}
+			</script>
+			
+
+        <!-- Priority -->
+        <div>
+            <label for="priority">Priority:</label>
+            <select th:field="*{priority}" id="priority" required>
+                <option value="">-- Select Priority --</option>
+                <option value="LOW">Low</option>
+                <option value="MEDIUM">Medium</option>
+                <option value="HIGH">High</option>
+            </select>
+        </div>
+
+
+	
+
+        <!-- ✅ File Upload -->
+        <label for="file">Upload File</label>
+        <div class="input-icon">
+            <i class="fas fa-upload"></i>
+            <input type="file" id="file" name="file" />
+        </div>
+
+
+
+        
+		<!-- 🔹 Feedback -->
+		<label for="feedback">Feedback</label>
+		<div class="input-icon">
+		    <i class="fas fa-comment-dots"></i>
+		    <textarea id="feedback" th:field="*{feedback}" rows="3"
+		              oninput="limitWords(this, 20, 'feedbackCount', 'feedback')"></textarea>
+		</div>
+		<small id="feedbackCount" class="text-muted">0 / 20 words</small>
+		<small id="feedbackAlert" class="text-danger" style="display: none; color: red;">Maximum 20 words allowed!</small>
+		
+
+
+        <div class="info">
+            SLA Deadline is auto-calculated based on priority:<br>
+            <strong>High</strong> = 4 hours, <strong>Medium</strong> = 12 hours, <strong>Low</strong> = 24 hours
+        </div>
+
+        <button type="submit"><i class="fas fa-paper-plane"></i> Submit Ticket</button>
+    </form>
+
+   
+   
+ <script>
+    // Track which fields are exceeding the limit
+    const exceededFields = {};
+
+    function limitWords(field, maxWords, counterId, fieldId) {
+        const words = field.value.trim().split(/\s+/).filter(Boolean);
+        let wordCount = words.length;
+
+        const counter = document.getElementById(counterId);
+        const alertBox = document.getElementById(fieldId + 'Alert');
+
+        if (wordCount > maxWords) {
+            exceededFields[fieldId] = true; // mark as exceeded
+            alertBox.style.display = 'block';
+            field.style.borderColor = 'red';
+        } else {
+            delete exceededFields[fieldId]; // remove if fixed
+            alertBox.style.display = 'none';
+            field.style.borderColor = '';
+        }
+
+        if (counter) {
+            counter.innerText = `${wordCount} / ${maxWords} words`;
+            counter.style.color = wordCount >= maxWords ? 'red' : '#7f8c8d';
+        }
+    }
+
+    // Final check before submit
+    function validateFormBeforeSubmit(event) {
+        if (Object.keys(exceededFields).length > 0) {
+            event.preventDefault(); // stop form submit
+            alert("Please reduce the text length in highlighted fields before submitting.");
+        }
+    }
+
+    // Attach submit event
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.querySelector("form");
+        form.addEventListener("submit", validateFormBeforeSubmit);
+    });
+</script>
+
+   
+</div>
+
+</body>
+</html>

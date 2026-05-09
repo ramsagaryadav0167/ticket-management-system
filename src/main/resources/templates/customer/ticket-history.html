@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{layout/customer-layout}">
+
+<head>
+    <title>Ticket History</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f8;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            padding: 40px 20px;
+        }
+
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .header-title {
+            font-size: 26px;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .back-button {
+            text-decoration: none;
+            background-color: #007bff;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+
+        .history-container {
+            margin-top: 20px;
+        }
+
+        /* ✅ Modular and Aligned Table */
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .history-table thead {
+            background-color: #2c3e50;
+            color: white;
+        }
+
+        .history-table th,
+        .history-table td {
+            padding: 14px 18px;
+            text-align: left;
+            vertical-align: middle;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .history-table th:first-child,
+        .history-table td:first-child {
+            border-left: none;
+        }
+
+        .history-table th:last-child,
+        .history-table td:last-child {
+            border-right: none;
+        }
+
+        .history-table th {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background-clip: padding-box;
+        }
+
+        .history-table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .history-table tbody tr:hover {
+            background-color: #eef1f5;
+            transition: background-color 0.2s ease;
+        }
+
+        .no-history {
+            text-align: center;
+            font-style: italic;
+            color: #777;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+
+<body>
+<section layout:fragment="content">
+    <div class="container">
+
+        <!-- ✅ Header -->
+        <div class="header-row">
+            <div class="header-title">
+                📜 Ticket History for Ticket #<span th:text="${ticket.id}"></span>
+            </div>
+            <a class="back-button" th:href="@{/customer/view_tickets}">← Back to My Tickets</a>
+        </div>
+
+        <!-- ✅ History Section -->
+        <div class="history-container">
+
+            <!-- ✅ Ticket History Table -->
+            <table class="history-table" th:if="${history != null and !history.isEmpty()}">
+                <thead>
+                    <tr>
+                        <th>🕒 Timestamp</th>
+                        <th>📝 Type</th>
+                        <th>📄 Description</th>
+                        <th>👤 Updated By</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="entry : ${history}">
+                        <td th:text="${#temporals.format(entry.timestamp, 'dd-MM-yyyy HH:mm')}"></td>
+                        <td th:text="${entry.type}"></td>
+                        <td th:text="${entry.description}"></td>
+                        <td th:text="${entry.updatedBy.fullName}"></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- ❌ No History Message -->
+            <div class="no-history" th:if="${history == null or history.isEmpty()}">
+                ⚠️ No history available for this ticket.
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

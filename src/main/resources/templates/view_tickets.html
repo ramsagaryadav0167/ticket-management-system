@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/user-layout}">
+
+<head>
+    <title>View Tickets</title>
+    <link rel="stylesheet" th:href="@{/css/user-style.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+	
+<style>
+:root {
+    /* 🎨 Theme Variables */
+    --primary: #2c3e50;
+    --accent: #3498db;
+    --danger: #e74c3c;
+    --success: #2ecc71;
+    --warning: #f39c12;
+    --light-bg: #f8f9fb;
+    --text: #333;
+    --font: 'Poppins', sans-serif;
+    --hover-light: #dff0ff;
+}
+
+body {
+    font-family: var(--font);
+    background: var(--light-bg);
+    color: var(--text);
+    margin: 0;
+    padding: 0;
+}
+
+/* -------------------------------
+   📦 Layout & Container
+-------------------------------- */
+.container {
+    margin-left: 240px;
+    padding: 100px 20px 40px;
+}
+
+/* 🏷 Heading */
+.header h1 {
+    font-size: 30px;
+    text-align: center;
+    color: var(--primary);
+    margin-bottom: 30px;
+    font-weight: 700;
+}
+
+/* 📦 Card */
+.card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    padding: 25px;
+    overflow-x: auto;
+}
+
+/* 📊 Table */
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 15px;
+    border: 1px solid #ccc;
+    border-radius: 16px;
+    overflow: hidden;
+    table-layout: fixed;
+    backdrop-filter: blur(8px);
+}
+
+thead th {
+    background: var(--primary);
+    color: #fff;
+    padding: 20px 12px;
+    text-transform: uppercase;
+    font-size: 14px;
+    font-weight: 600;
+    border-right: 1px solid #ddd;
+    white-space: nowrap;
+    height: 70px;
+}
+
+thead th:last-child {
+    border-right: none;
+}
+
+tbody tr:nth-child(even) {
+    background: #f9f9f9;
+}
+
+tbody tr:nth-child(odd) {
+    background: #fff;
+}
+
+tbody tr:hover {
+    background-color: #f2f7fd;
+    transition: background 0.3s ease;
+}
+
+tbody td {
+    padding: 12px 10px;
+    text-align: center;
+    font-weight: 500;
+    font-size: 15px;
+    border-top: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-wrap: break-word;
+}
+
+tbody td:last-child {
+    border-right: none;
+}
+
+/* 📏 Description / Long Text Column */
+td.long-text {
+    max-width: 160px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+td.long-text:hover {
+    white-space: normal;
+    overflow: visible;
+}
+
+/* 📂 File Link */
+td.file-link a {
+    color: var(--accent);
+    font-weight: 600;
+    text-decoration: none;
+}
+td.file-link a:hover {
+    text-decoration: underline;
+}
+
+/* -------------------------------
+   🎯 Action Buttons (Updated)
+-------------------------------- */
+.actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.icon-btn,
+.update-icon {
+    font-size: 20px;
+    width: 42px;
+    height: 42px;
+    border: none;
+    background-color: transparent;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+/* Colors */
+.icon-btn.edit {
+    color: var(--success);
+}
+.icon-btn.delete {
+    color: var(--danger);
+}
+.icon-btn.history {
+    color: var(--warning);
+}
+.icon-btn.view {
+    color: var(--accent);
+}
+.update-icon {
+    color: var(--success);
+}
+
+/* Hover Effect */
+.icon-btn:hover,
+.update-icon:hover {
+    background-color: var(--hover-light);
+    transform: scale(1.1);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    filter: brightness(1.2);
+}
+
+/* -------------------------------
+   📑 Pagination
+-------------------------------- */
+.pagination-container {
+    text-align: center;
+    margin: 30px 0 10px;
+}
+.pagination {
+    display: inline-flex;
+    list-style: none;
+    padding: 0;
+    gap: 10px;
+}
+.pagination li a {
+    display: block;
+    padding: 10px 16px;
+    color: var(--text);
+    background-color: #f2f2f2;
+    text-decoration: none;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+.pagination li a:hover {
+    background-color: var(--accent);
+    color: #fff;
+}
+.pagination li.active a {
+    background-color: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+    font-weight: 700;
+}
+
+/* -------------------------------
+   📱 Responsive
+-------------------------------- */
+@media (max-width: 768px) {
+    .container {
+        margin-left: 0;
+        padding: 80px 10px;
+    }
+    table {
+        font-size: 13px;
+    }
+    thead th,
+    tbody td {
+        font-size: 12px;
+        padding: 10px 8px;
+    }
+    .header h1 {
+        font-size: 24px;
+    }
+    .icon-btn,
+    .update-icon {
+        font-size: 18px;
+        width: 32px;
+        height: 32px;
+    }
+    td.long-text {
+        max-width: 120px;
+    }
+}
+
+/* -------------------------------
+   🎞 Animations
+-------------------------------- */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+@keyframes zoomIn {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+/* -------------------------------
+   🖼 Image Modal
+-------------------------------- */
+.image-modal {
+    display: none;
+    position: fixed;
+    z-index: 1050;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(2px);
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+.image-modal-content {
+    max-width: 90%;
+    max-height: 80%;
+    border-radius: 10px;
+    box-shadow: 0 0 25px rgba(255, 255, 255, 0.3);
+    animation: zoomIn 0.3s ease;
+}
+.image-modal .close {
+    position: absolute;
+    top: 20px;
+    right: 35px;
+    font-size: 35px;
+    font-weight: bold;
+    color: #fff;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.image-modal .close:hover {
+    color: #ff4d4d;
+}
+.download-btn {
+    margin-top: 20px;
+    background-color: var(--accent);
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 5px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.3s;
+}
+.download-btn:hover {
+    background-color: #2c80b4;
+}
+</style>
+
+   
+</head>
+
+<body>
+<div layout:fragment="content" class="container">
+    <div class="header">
+        <h1>🎫 All Tickets</h1>
+    </div>
+
+    <div class="card">
+        <div style="overflow-x: auto;">
+            <table>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Priority</th>
+                    <th>Status</th>
+                    <th>Created By</th>
+                    <th>SLA Deadline</th>
+                    <th>File</th>
+                    <th>Feedback</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="ticket : ${ticketsPage.content}">
+                    <td th:text="${ticket.id}">1</td>
+                    <td class="long-text" th:title="${ticket.title}" th:text="${ticket.title}">Title</td>
+                    <td class="long-text" th:title="${ticket.description}" th:text="${ticket.description}">Description</td>
+                    <td th:text="${ticket.priority}">High</td>
+                    <td th:text="${ticket.status}">Open</td>
+                    <td th:text="${ticket.user != null ? ticket.user.username : 'Unknown'}">User</td>
+                    <td th:text="${ticket.slaDeadline != null ? #temporals.format(ticket.slaDeadline, 'yyyy-MM-dd HH:mm') : 'N/A'}">N/A</td>
+                    <td class="file-link">
+    <!-- ✅ If file exists -->
+    <i th:if="${ticket.fileUpload != null}" 
+       class="fas fa-file-image"
+       style="font-size: 16px; color: #3498db; cursor: pointer;"
+       th:attr="onclick=|openImageModal('/uploads/${ticket.fileUpload}', '${ticket.fileUpload}')|"
+       title="View Image">
+    </i>
+
+    <!-- ❌ If no file -->
+    <span th:if="${ticket.fileUpload == null}">N/A</span>
+</td>
+
+
+                    <td class="long-text" th:title="${ticket.feedback}" th:text="${ticket.feedback != null ? ticket.feedback : 'N/A'}">Feedback</td>
+                    <td class="actions">
+                    	
+                        <!-- 🕘 View History (Modal) -->
+						<span class="icon-btn history-btn"
+						      th:data-ticket-id="${ticket.id}"
+						      title="View History">
+						    <i class="fas fa-route"></i>
+						</span>
+						
+						<!-- 🕘 Delete (Modal) -->
+                       <span class="icon-btn delete delete-btn"
+						      th:data-ticket-id="${ticket.id}"
+						      title="Delete Ticket">
+						    <i class="fas fa-trash-alt"></i>
+						</span>
+						
+						<!-- 🕘 Update Status (Modal) -->
+                        <span class="update-icon open-status-modal"
+                              th:attr="data-ticket-id=${ticket.id}, data-current-status=${ticket.status}"
+                              title="Update Status">
+                            <i class="fas fa-sync-alt"></i>
+                        </span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+	<div class="pagination-container">
+    <ul class="pagination">
+        <li th:if="${currentPage > 0}">
+            <a th:href="@{/user/view_tickets(page=${currentPage - 1}, size=${ticketsPage.size})}">&laquo; Prev</a>
+        </li>
+        <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+            th:classappend="${i == currentPage} ? 'active'">
+            <a th:href="@{/user/view_tickets(page=${i}, size=${ticketsPage.size})}" th:text="${i + 1}"></a>
+        </li>
+        <li th:if="${currentPage < totalPages - 1}">
+            <a th:href="@{/user/view_tickets(page=${currentPage + 1}, size=${ticketsPage.size})}">Next &raquo;</a>
+        </li>
+    </ul>
+</div>
+	
+	
+	<!-- 🌟 Image View + Download Modal -->
+<div id="imageModal" class="image-modal" onclick="closeImageModal()">
+    <span class="close" onclick="closeImageModal()">&times;</span>
+    <img id="modalImage" class="image-modal-content" alt="Ticket Attachment">
+    <a id="downloadLink" class="download-btn" href="#" download>⬇ Download</a>
+</div>
+	
+	
+	
+	
+	<!-- ✅ Delete Confirmation Modal -->
+<div id="deleteModal" style="
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    backdrop-filter: blur(4px); /* 🔵 Blur background */
+    background-color: rgba(0,0,0,0.4); /* Semi-transparent */
+    justify-content: center;
+    align-items: center;
+    z-index: 1002;
+    font-family: 'Poppins', sans-serif;
+    animation: fadeIn 0.3s ease;
+">
+
+    <div style="
+        background: white;
+        padding: 35px 30px;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 480px;  /* 🔵 Increased modal size */
+        text-align: center;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+        animation: zoomIn 0.3s ease;
+    
+    ">
+        <h2 style="margin-bottom: 18px; color: #2c3e50;">Are you sure?</h2>
+        <p style="color: #555; font-size: 15px;">
+            This action will permanently delete the ticket.
+        </p>
+
+        <div style="margin-top: 28px; display: flex; justify-content: center; gap: 60px;">
+            <button onclick="closeDeleteModal()" style="
+                padding: 10px 20px;
+                background: #bdc3c7;
+                color: #2c3e50;
+                border: none;
+                border-radius: 6px;
+                font-weight: 500;
+                cursor: pointer;
+                transition: background 0.3s ease;
+            " 
+            onmouseover="this.style.backgroundColor='#95a5a6'" 
+            onmouseout="this.style.backgroundColor='#bdc3c7'">
+                Cancel
+            </button>
+
+            <button id="confirmDeleteBtn" style="
+                padding: 10px 20px;
+                background: #e74c3c;
+                color: #fff;
+                border: none;
+                border-radius: 6px;
+                font-weight: 500;
+                cursor: pointer;
+                transition: background 0.3s ease;
+            " 
+            onmouseover="this.style.backgroundColor='#c0392b'" 
+            onmouseout="this.style.backgroundColor='#e74c3c'">
+                Delete
+            </button>
+        </div>
+    </div>
+</div>
+
+
+
+	
+	
+	<div id="toast" class="toast" style="
+    display: none;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #2ecc71;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 6px;
+    font-weight: 500;
+    z-index: 2000;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+"></div>
+	
+	
+	
+
+    <!-- ✅ Status Update Modal -->
+	<div id="statusModal" style="
+	    display: none;
+	    position: fixed;
+	    top: 0; left: 0;
+	    width: 100%; height: 100%;
+	    background-color: rgba(0, 0, 0, 0.4);
+	    backdrop-filter: blur(3px); /* 🔷 Slight blur for depth */
+	    justify-content: center;
+	    align-items: center;
+	    z-index: 1002;
+	    font-family: 'Poppins', sans-serif;
+	    animation: fadeIn 0.3s ease;
+	">
+	
+	    <div style="
+	        background: #fff;
+	        padding: 30px 28px;
+	        border-radius: 12px;
+	        width: 90%;
+	        max-width: 420px;
+	        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.25);
+	        animation: zoomIn 0.3s ease;
+	    ">
+	        <h2 style="margin-bottom: 18px; color: #2c3e50; text-align: center;">
+	            Update Ticket Status
+	        </h2>
+	
+	        <form id="statusForm" method="post">
+	            <select name="status" id="statusSelect" required style="
+	                width: 100%;
+	                padding: 10px 12px;
+	                font-size: 15px;
+	                border: 1px solid #ccc;
+	                border-radius: 6px;
+	                margin-bottom: 22px;
+	                background-color: #f9f9f9;
+	                transition: border 0.3s ease;
+	            "
+	            onfocus="this.style.borderColor='#3498db'"
+	            onblur="this.style.borderColor='#ccc'">
+	                <option value="Open">Open</option>
+	                <option value="In Progress">In Progress</option>
+	                <option value="Resolved">Resolved</option>
+	                <option value="Closed">Closed</option>
+	            </select>
+	
+	            <div style="display: flex; justify-content: flex-end; gap: 14px;">
+	                <button type="button" onclick="closeModal()" style="
+	                    padding: 8px 18px;
+	                    background: #bdc3c7;
+	                    color: #2c3e50;
+	                    border: none;
+	                    border-radius: 6px;
+	                    font-weight: 500;
+	                    cursor: pointer;
+	                    transition: background 0.3s ease;
+	                " 
+	                onmouseover="this.style.backgroundColor='#95a5a6'" 
+	                onmouseout="this.style.backgroundColor='#bdc3c7'">
+	                    Cancel
+	                </button>
+	
+	                <button type="submit" style="
+	                    padding: 8px 18px;
+	                    background: #3498db;
+	                    color: white;
+	                    border: none;
+	                    border-radius: 6px;
+	                    font-weight: 500;
+	                    cursor: pointer;
+	                    transition: background 0.3s ease;
+	                " 
+	                onmouseover="this.style.backgroundColor='#2980b9'" 
+	                onmouseout="this.style.backgroundColor='#3498db'">
+	                    Update
+	                </button>
+	            </div>
+	        </form>
+	    </div>
+	</div>
+
+	
+	
+	<!-- ✅ Ticket History Modal -->
+	<div id="historyModal" style="
+	    display: none;
+	    position: fixed;
+	    top: 0; left: 0;
+	    width: 100%; height: 100%;
+	    background-color: rgba(0, 0, 0, 0.4);
+	    backdrop-filter: blur(4px);
+	    justify-content: center;
+	    align-items: center;
+	    z-index: 1001;
+	">
+	    <div style="
+	        background: #fff;
+	        padding: 30px 24px;
+	        border-radius: 10px;
+	        width: 95%;
+	        max-width: 900px;
+	        max-height: 80vh;
+	        overflow-y: auto;
+	        font-family: 'Poppins', sans-serif;
+	        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+	        animation: fadeIn 0.3s ease;
+	    ">
+	        <h2 style="
+	            margin-bottom: 18px;
+	            font-size: 20px;
+	            font-weight: 600;
+	            color: #2c3e50;
+	            text-align: center;
+	        ">📜 Ticket History</h2>
+	
+	        <div id="historyContent">
+	            <p>Loading...</p>
+	        </div>
+	
+	        <div style="text-align: center; margin-top: 24px;">
+	            <button onclick="closeHistoryModal()" style="
+	                padding: 8px 20px;
+	                background-color: #3498db;
+	                color: #fff;
+	                border: none;
+	                border-radius: 6px;
+	                font-size: 14px;
+	                cursor: pointer;
+	                transition: background-color 0.3s ease;
+	            " onmouseover="this.style.backgroundColor='#2980b9'"
+	               onmouseout="this.style.backgroundColor='#3498db'">
+	                Close
+	            </button>
+	        </div>
+	    </div>
+	</div>
+
+<!-- 🔁 Optional: Add simple fade animation -->
+
+
+
+	
+
+<!-- ✅ Status Modal Script -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const modal = document.getElementById("statusModal");
+        const form = document.getElementById("statusForm");
+        const statusSelect = document.getElementById("statusSelect");
+
+        document.querySelectorAll(".open-status-modal").forEach(icon => {
+            icon.addEventListener("click", () => {
+                const ticketId = icon.getAttribute("data-ticket-id");
+                const currentStatus = icon.getAttribute("data-current-status");
+
+                form.action = `/user/tickets/${ticketId}/update-status`;
+
+                [...statusSelect.options].forEach(option => {
+                    option.selected = option.value === currentStatus;
+                });
+
+                modal.style.display = "flex";
+            });
+        });
+
+        window.closeModal = function () {
+            modal.style.display = "none";
+        }
+
+        window.addEventListener("click", function (event) {
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+    });
+    
+    <!-- ✅ Status Modal Script end -->
+  
+    
+    document.addEventListener("DOMContentLoaded", function () {
+        const historyModal = document.getElementById("historyModal");
+        const historyContent = document.getElementById("historyContent");
+
+        document.querySelectorAll(".history-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const ticketId = btn.getAttribute("data-ticket-id");
+
+                fetch(`/user/ticket-history/${ticketId}`)
+                    .then(response => response.text())
+                    .then(html => {
+                        // Parse the returned full HTML
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, "text/html");
+
+                        // Extract only the content inside the div with class 'container'
+                        const container = doc.querySelector(".container");
+
+                        if (container) {
+                            historyContent.innerHTML = container.innerHTML;
+                        } else {
+                            historyContent.innerHTML = "<p>No history found.</p>";
+                        }
+
+                        historyModal.style.display = "flex";
+                    })
+                    .catch(error => {
+                        console.error("Error loading history:", error);
+                        historyContent.innerHTML = "<p style='color:red;'>Failed to load history.</p>";
+                        historyModal.style.display = "flex";
+                    });
+            });
+        });
+
+        window.closeHistoryModal = function () {
+            historyModal.style.display = "none";
+        };
+
+        window.addEventListener("click", function (event) {
+            if (event.target === historyModal) {
+                closeHistoryModal();
+            }
+        });
+    });
+    
+    
+    
+    //Delete Model & Toast
+    document.addEventListener("DOMContentLoaded", () => {
+        const deleteModal = document.getElementById("deleteModal");
+        const confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
+        let selectedTicketId = null;
+
+        document.querySelectorAll(".delete-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                selectedTicketId = btn.getAttribute("data-ticket-id");
+                deleteModal.style.display = "flex";
+            });
+        });
+
+        window.closeDeleteModal = () => {
+            deleteModal.style.display = "none";
+            selectedTicketId = null;
+        };
+
+        confirmDeleteBtn.addEventListener("click", () => {
+            if (!selectedTicketId) return;
+
+            fetch(`/user/delete-ticket/${selectedTicketId}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: "_method=delete"
+            })
+            .then(response => {
+                if (response.redirected) {
+                    // If redirect occurs, show toast and reload
+                    showToast("Ticket deleted successfully!", true);
+                    setTimeout(() => window.location.href = response.url, 1500);
+                } else {
+                    throw new Error("Delete failed");
+                }
+            })
+            .catch(error => {
+                showToast("Failed to delete ticket.", false);
+                console.error(error);
+            });
+
+            closeDeleteModal();
+        });
+
+        // ✅ Toast logic
+        window.showToast = function (message, success = true) {
+            const toast = document.getElementById("toast");
+            toast.textContent = message;
+            toast.style.backgroundColor = success ? "#2ecc71" : "#e74c3c";
+            toast.style.display = "block";
+            setTimeout(() => {
+                toast.style.display = "none";
+            }, 3000);
+        };
+    });
+    
+
+
+	
+
+
+    function openImageModal(src, fileName) {
+        const modal = document.getElementById("imageModal");
+        const modalImg = document.getElementById("modalImage");
+        const downloadLink = document.getElementById("downloadLink");
+
+        modal.style.display = "flex";
+        modalImg.src = src;
+        downloadLink.href = src;
+        downloadLink.download = fileName;
+
+        event.stopPropagation();
+    }
+
+    function closeImageModal() {
+        document.getElementById("imageModal").style.display = "none";
+    }
+</script>
+
+
+</div>
+</body>
+</html>

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+	
+    <meta charset="UTF-8">
+    <title>Customer Layout</title>
+    <link rel="stylesheet" th:href="@{/css/customer-style.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+<div class="main-wrapper">
+
+    <!-- ✅ Top Navigation -->
+    <div class="navbar">
+        <h1>🎫 Ticket Management System</h1>
+        <div class="nav-links">
+		    <a th:href="@{/customer/profile}" class="nav-icon-profile" title="Profile">
+		        <i class="fas fa-user-cog"></i>
+		    </a>
+		    <a href="/logout" class="logout-button" title="Logout">
+		        <i class="fas fa-sign-out-alt"></i>
+		    </a>
+		</div>
+
+    </div>
+
+    <!-- ✅ Sidebar -->
+    <div class="sidebar">
+    	 <a th:href="@{/customer/dashboard}"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+        <a th:href="@{/customer/create_ticket}"><i class="fas fa-plus-circle"></i> Create Ticket</a>
+        <a th:href="@{/customer/view_tickets}"><i class="fas fa-ticket-alt"></i> View Tickets</a>
+        <a th:href="@{/customer/profile}"><i class="fas fa-user"></i> Profile</a>
+      
+        <a th:href="@{/customer/help}"><i class="fas fa-question-circle"></i> Help</a>
+        <a th:href="@{/customer/services}"><i class="fas fa-concierge-bell"></i> Services</a>
+       
+    </div>
+
+    <!-- 🔽 Thymeleaf page content -->
+    <div class="main-content" layout:fragment="content">
+        <!-- Page-specific content goes here -->
+    </div>
+
+    <!-- ✅ Footer -->
+    <footer>
+        <p>&copy; 2025 Railbit Ticket Management System. All rights reserved.</p>
+    </footer>
+
+    <!-- ✅ Floating Chat Button -->
+    <button id="chatToggleBtn" class="chat-toggle-btn">💬 Support Chat</button>
+
+    <!-- ✅ Chat Box -->
+    <div id="chatBox" class="chat-box" style="display:none;">
+        <div class="chat-header">
+            <span>Support Chat</span>
+            <button onclick="toggleChat()" class="close-btn">✖</button>
+        </div>
+
+        <!-- ✅ Dropdown -->
+        <div class="chat-select-area">
+            <select id="chatTarget" onchange="loadMessages()">
+                <option value="agent">👨‍🔧 Assigned Agent</option>
+                <option value="admin">👨‍💼 Admin</option>
+            </select>
+        </div>
+
+        <!-- ✅ Messages display -->
+        <div class="chat-messages" id="chatMessages"></div>
+
+        <!-- ✅ Input area -->
+        <div class="chat-input-area">
+            <input type="text" id="chatInput" placeholder="Type your message..." />
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <!-- ✅ Chat Styles -->
+    <style>
+        .chat-toggle-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 12px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            z-index: 999;
+        }
+
+        .chat-box {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 320px;
+            max-height: 450px;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+        }
+
+        .chat-header {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+        .close-btn {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .chat-select-area {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .chat-select-area select {
+            width: 100%;
+            padding: 6px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .chat-messages {
+            flex-grow: 1;
+            padding: 10px;
+            overflow-y: auto;
+            max-height: 250px;
+            font-size: 14px;
+        }
+
+        .chat-input-area {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #ddd;
+        }
+
+        .chat-input-area input {
+            flex-grow: 1;
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin-right: 5px;
+        }
+
+        .chat-input-area button {
+            padding: 8px 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .chat-messages div {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+        
+    </style>
+
+    <!-- ✅ JavaScript -->
+   <script>
+    const chatBox = document.getElementById("chatBox");
+    const chatBtn = document.getElementById("chatToggleBtn");
+
+    function toggleChat() {
+        chatBox.style.display = chatBox.style.display === "none" ? "flex" : "none";
+    }
+
+    chatBtn.addEventListener("click", () => {
+        toggleChat();
+        populateAgentDropdown(); // ✅ Populate dropdown dynamically
+        loadMessages(); // Load messages when opened
+    });
+
+    async function populateAgentDropdown() {
+        const select = document.getElementById("chatTarget");
+        select.innerHTML = "";
+
+        // ✅ Add Admin option first
+        const adminOption = document.createElement("option");
+        adminOption.value = "admin";
+        adminOption.textContent = "👨‍💼 Admin";
+        select.appendChild(adminOption);
+
+        try {
+            const res = await fetch("/customer/chat/agents");
+            const agents = await res.json();
+
+            agents.forEach(agent => {
+                const option = document.createElement("option");
+                option.value = agent.username; // Send username as target
+                option.textContent = `👨‍🔧 ${agent.fullName}`;
+                select.appendChild(option);
+            });
+        } catch (error) {
+            console.error("Error loading agents:", error);
+        }
+    }
+
+    async function sendMessage() {
+        const input = document.getElementById("chatInput");
+        const message = input.value.trim();
+        const target = document.getElementById("chatTarget").value;
+
+        if (!message) return;
+
+        await fetch(`/customer/chat/send?message=${encodeURIComponent(message)}&target=${target}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            }
+        });
+
+        input.value = "";
+        loadMessages();
+    }
+
+    async function loadMessages() {
+        const target = document.getElementById("chatTarget").value;
+        const res = await fetch(`/customer/chat/messages?target=${target}`);
+        const messages = await res.json();
+        const box = document.getElementById("chatMessages");
+        box.innerHTML = "";
+
+        messages.forEach(msg => {
+            const div = document.createElement("div");
+            div.innerHTML = `<strong>${msg.sender.fullName}</strong> ➡ <strong>${msg.receiver.fullName}</strong>: ${msg.message}`;
+            box.appendChild(div);
+        });
+
+        box.scrollTop = box.scrollHeight;
+    }
+
+    setInterval(() => {
+        if (chatBox.style.display !== "none") {
+            loadMessages();
+        }
+    }, 8000);
+</script>
+
+<script>
+    // Highlight active sidebar link based on current URL path
+    document.addEventListener("DOMContentLoaded", function () {
+        const currentPath = window.location.pathname;
+
+        document.querySelectorAll(".sidebar a").forEach(link => {
+            const linkPath = link.getAttribute("href");
+            if (currentPath === linkPath) {
+                link.classList.add("active");
+            }
+        });
+    });
+</script>
+</div>
+</body>
+</html> 

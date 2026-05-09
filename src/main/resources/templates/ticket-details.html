@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/admin-layout}">
+
+<head>
+    <title>Ticket Details</title>
+    <style>
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f8f9fa;
+        }
+
+      
+    </style>
+</head>
+
+<body>
+<div layout:fragment="content">
+    <div class="container">
+        <h2>Ticket History for: <span th:text="${ticket.title}"></span></h2>
+		<div th:fragment="historyContent">
+	        <table th:if="${historyList != null and !historyList.isEmpty()}">
+	            <thead>
+	                <tr>
+	                    <th>Type</th>
+	                    <th>Description</th>
+	                    <th>Updated By</th>
+	                    <th>Timestamp</th>
+	                </tr>
+	            </thead>
+	          <tbody>
+			    <tr th:each="h : ${historyList}">
+			        <td th:text="${h.type}">TYPE</td>
+			        <td th:text="${h.description}">desc</td>
+			        <td th:text="${h.updatedBy != null ? h.updatedBy.fullName : 'System'}">by</td>
+			        <td th:text="${#temporals.format(h.timestamp, 'dd MMM yyyy HH:mm')}">time</td>
+			    </tr>
+			</tbody>
+
+	        </table>
+
+	        <p th:if="${historyList == null or historyList.isEmpty()}" style="text-align:center; color:gray;">
+	            No history found for this ticket.
+	        </p>
+	      </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/user-layout}">
+
+<head>
+    <title>Services</title>
+    <link rel="stylesheet" th:href="@{/css/user-style.css}">
+    <style>
+        body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f6f9;
+    margin: 0;
+    padding: 0;
+}
+
+/* Container Card */
+.card {
+    margin: 30px auto;
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+    max-width: 1000px;
+    transition: all 0.3s ease;
+}
+
+.card h2 {
+    margin-bottom: 20px;
+    color: #2c3e50;
+    font-size: 24px;
+}
+
+/* Grid System */
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+    margin-top: 25px;
+}
+
+/* Individual Dashboard Card */
+.dashboard-card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    border: 1px solid #e6e9ed;
+}
+
+.dashboard-card i {
+    font-size: 34px;
+    color: #3498db;
+    margin-bottom: 12px;
+    transition: color 0.3s ease;
+}
+
+.dashboard-card p {
+    margin: 5px 0;
+    color: #34495e;
+}
+
+/* Hover effect */
+.dashboard-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 12px 28px rgba(52, 152, 219, 0.15);
+    background: #fdfefe;
+}
+
+.dashboard-card:hover i {
+    color: #2c80b4;
+}
+
+/* Form Styling */
+form label {
+    font-weight: 600;
+    margin-top: 15px;
+    display: block;
+    color: #34495e;
+}
+
+input[type="text"], textarea {
+    width: 100%;
+    padding: 12px;
+    margin-top: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+    font-family: inherit;
+    background-color: #f9f9f9;
+    transition: all 0.3s ease;
+}
+
+input[type="text"]:focus,
+textarea:focus {
+    outline: none;
+    border-color: #3498db;
+    background-color: #fff;
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+}
+
+/* Submit Button */
+.primary-btn {
+    margin-top: 20px;
+    background-color: #3498db;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.primary-btn:hover {
+    background-color: #2980b9;
+    transform: scale(1.02);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .card-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+    </style>
+</head>
+
+<body>
+<div layout:fragment="content" class="main-content">
+
+    <!-- ✅ Our Services Section FIRST -->
+    <div class="card">
+        <h2>📦 Our Services Include</h2>
+        <div class="card-grid">
+            <div class="dashboard-card">
+                <i class="fas fa-ticket-alt"></i>
+                <p><strong>Easy Ticket Creation</strong></p>
+                <p>Raise tickets quickly for issues or service requests.</p>
+            </div>
+
+            <div class="dashboard-card">
+                <i class="fas fa-edit"></i>
+                <p><strong>Edit & Update Tickets</strong></p>
+                <p>Update your ticket status or details anytime.</p>
+            </div>
+
+            <div class="dashboard-card">
+                <i class="fas fa-history"></i>
+                <p><strong>Ticket History & Logs</strong></p>
+                <p>Track every change made to a ticket in real time.</p>
+            </div>
+
+            <div class="dashboard-card">
+                <i class="fas fa-user-cog"></i>
+                <p><strong>User Profile Management</strong></p>
+                <p>Update personal details and manage credentials.</p>
+            </div>
+
+            <div class="dashboard-card">
+                <i class="fas fa-question-circle"></i>
+                <p><strong>Help & Support</strong></p>
+                <p>Access FAQs or chat with support.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ✅ Software Request Form SECOND -->
+    <div class="card">
+        <h2><i class="fas fa-plus-circle"></i> Submit New Software Request</h2>
+        <form th:action="@{/services}" th:object="${serviceRequest}" method="post">
+            <label for="serviceName">Software Name:</label>
+            <input type="text" id="serviceName" th:field="*{serviceName}" required>
+
+            <label for="description">Description:</label>
+            <textarea id="description" th:field="*{description}" rows="4" required></textarea>
+
+            <button type="submit" class="primary-btn"><i class="fas fa-paper-plane"></i> Submit</button>
+        </form>
+    </div>
+
+   
+
+</div>
+</body>
+</html>

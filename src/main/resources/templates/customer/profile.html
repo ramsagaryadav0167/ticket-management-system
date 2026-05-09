@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/customer-layout}">
+
+<head>
+    <title>My Profile</title>
+
+    <!-- ✅ Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- ✅ Custom Styles -->
+    <link rel="stylesheet" th:href="@{/css/customer-style.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+    /* ✅ General Profile Styling */
+   .profile-container {
+    max-width: 750px;
+    margin: 120px auto;
+    padding: 40px;
+    background: linear-gradient(to bottom right, #e0f7fa, #ffffff);
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    font-family: 'Inter', sans-serif;
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+
+    .profile-container h2 {
+        text-align: center;
+        color: #2c3e50;
+        font-size: 30px;
+        margin-bottom: 25px;
+    }
+
+   /* ✅ Profile Card Styling */
+.profile-details {
+    background: linear-gradient(135deg, #f0faff, #fefefe);
+    border: 1px solid #dbeafe;
+    border-radius: 12px;
+    padding: 25px 30px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+}
+.profile-details:hover {
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+}
+   .profile-details p {
+    display: flex;
+    align-items: center;
+    font-size: 15.5px;
+    color: #2f3640;
+    font-weight: 500;
+    border-bottom: 1px solid #eaeaea;
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+}
+.profile-details p:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+.profile-details i {
+    width: 24px;
+    text-align: center;
+    font-size: 17px;
+}
+    .profile-details strong {
+        display: inline-block;
+        width: 150px;
+        color: #2c3e50;
+        font-weight: 600;
+    }
+
+    .action-links {
+        display: flex;
+        justify-content: center;
+        margin-top: 35px;
+    }
+
+    .action-links a,
+    .action-links button {
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ✅ Modal Styling */
+    .modal-dialog {
+        max-width: 850px;
+        width: 95%;
+        margin: 4% auto;
+    }
+
+    .modal-content {
+        border-radius: 12px;
+        padding: 15px 25px;
+        background: #ffffff;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+        border: 2px;
+    }
+
+    .modal-header {
+        border-bottom: 1px solid #e5e5e5;
+        padding-bottom: 10px;
+        
+    }
+
+    .modal-title {
+        font-size: 22px;
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .modal-footer {
+        border-top: 1px solid #e5e5e5;
+        padding-top: 10px;
+        justify-content: flex-end;
+    }
+
+    /* ✅ Form fields */
+    .modal-body label {
+        font-weight: 500;
+        color: #34495e;
+        margin-bottom: 5px;
+    }
+
+    .modal-body .form-control,
+    .modal-body .form-select {
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        transition: border-color 0.2s ease;
+    }
+
+    .modal-body .form-control:focus,
+    .modal-body .form-select:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+    }
+
+    /* ✅ Blur background professionally */
+    .modal-backdrop.show {
+        background-color: rgba(30, 30, 30, 0.3) !important;
+        backdrop-filter: blur(4px) saturate(120%) !important;
+        opacity: 1 !important;
+    }
+
+    /* Smooth slide-in */
+    .modal.fade .modal-dialog {
+        transform: translateY(-25px);
+        transition: transform 0.4s ease, opacity 0.4s ease;
+        opacity: 0;
+    }
+
+    .modal.fade.show .modal-dialog {
+        transform: translateY(0);
+        opacity: 1;
+    }
+     /* Prevent scrolling inside modal */
+        body.modal-open {
+            overflow: auto;
+        }
+
+        .modal {
+            overflow: hidden;
+        }
+        
+        
+        
+ /* 🧩 Modular Field Styling inside Modal */
+.modal-body .form-label {
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #34495e;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.modal-body .form-control,
+.modal-body .form-select {
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+    padding: 10px 12px;
+    font-size: 15px;
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    background-color: #fdfefe;
+}
+
+.modal-body .form-control:focus,
+.modal-body .form-select:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.15);
+    background-color: #ffffff;
+}
+
+.modal-body .form-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg fill='gray' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px 16px;
+}
+
+/* Ensure spacing between fields */
+.modal-body .col-md-6,
+.modal-body .col-md-12 {
+    padding-bottom: 15px;
+}
+
+/* Smooth button spacing */
+.modal-footer .btn {
+    min-width: 100px;
+}
+ 
+</style>
+
+</head>
+
+<body>
+<div layout:fragment="content" class="profile-container">
+
+    <!-- ✅ Flash message -->
+    <div th:if="${success}" class="alert-success" th:text="${success}"></div>
+
+    <h2>👤 My Profile</h2>
+
+   <div class="profile-details">
+
+	    <p><i class="fas fa-user me-2 text-primary"></i> 
+	        <strong>Full Name:</strong> <span th:text="${user.fullName}">Full Name</span>
+	    </p>
+	
+	    <p><i class="fas fa-user-tag me-2 text-info"></i> 
+	        <strong>Username:</strong> <span th:text="${user.username}">Username</span>
+	    </p>
+	
+	    <p><i class="fas fa-envelope me-2 text-danger"></i> 
+	        <strong>Email:</strong> <span th:text="${user.email}">Email</span>
+	    </p>
+	
+	    <p><i class="fas fa-phone me-2 text-success"></i> 
+	        <strong>Phone:</strong> <span th:text="${user.phone}">Phone</span>
+	    </p>
+	
+	    <p><i class="fas fa-venus-mars me-2 text-warning"></i> 
+	        <strong>Gender:</strong> <span th:text="${user.gender}">Gender</span>
+	    </p>
+	
+	    <p><i class="fas fa-user-shield me-2 text-secondary"></i> 
+	        <strong>Role:</strong> <span th:text="${user.role}">Role</span>
+	    </p>
+	
+	</div>
+	
+	<!-- ✅ Styled Edit Profile Button -->
+	<div class="action-links">
+	    <button type="button" class="btn btn-outline-primary d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+	        <i class="fas fa-pen-to-square"></i> Edit Profile
+	    </button>
+	</div>
+
+
+    <!-- ✅ Bootstrap Modal -->
+    <div id="editProfileModal" class="modal fade" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+
+                <!-- ✅ Stylish Modal Header -->
+				<div class="modal-header justify-content-center position-relative">
+				    <h5 class="modal-title d-flex align-items-center gap-2 text-primary">
+				        <i class="fas fa-user-edit"></i> Edit Profile
+				    </h5>
+				    <button type="button" class="btn-close position-absolute end-0 me-3" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+
+
+                <!-- Modal Form -->
+				<form th:action="@{/customer/profile}" method="post" th:object="${user}">
+				    <div class="modal-body">
+				        <div class="container-fluid">
+				            <div class="row g-3">
+				
+				<!-- Full Name -->
+				<div class="col-md-6">
+				    <label for="fullName" class="form-label">
+				        <i class="fas fa-user me-1 text-primary"></i> Full Name
+				    </label>
+				    <input type="text"
+				           th:field="*{fullName}"
+				           class="form-control"
+				           id="fullName"
+				           required
+				           minlength="4"
+				           pattern="^[A-Za-z ]{4,}$"
+				           title="Name must be at least 4 alphabetic characters.">
+				    <div class="invalid-feedback">
+				        Please enter at least 4 alphabetic characters.
+				    </div>
+				</div>
+
+				
+				
+				
+				 <!-- Phone -->
+                <div class="col-md-6">
+                    <label for="phone" class="form-label">
+                        <i class="fas fa-phone me-1 text-success"></i> Phone
+                    </label>
+                    <input type="text" th:field="*{phone}" class="form-control" id="phone" required 
+                           pattern="^[6-9]\d{9}$" title="Enter a valid 10-digit phone number starting with 6-9">
+                    <div class="invalid-feedback">
+                        Please enter a valid 10-digit phone number starting with 6-9.
+                    </div>
+                </div>
+				
+				                <!-- Gender -->
+				                <div class="col-md-6">
+				                    <label for="gender" class="form-label">
+				                        <i class="fas fa-venus-mars me-1 text-danger"></i> Gender
+				                    </label>
+				                    <select th:field="*{gender}" class="form-select" id="gender" required>
+				                        <option value="">-- Select Gender --</option>
+				                        <option value="Male" th:selected="${user.gender == 'Male'}">Male</option>
+				                        <option value="Female" th:selected="${user.gender == 'Female'}">Female</option>
+				                        <option value="Other" th:selected="${user.gender == 'Other'}">Other</option>
+				                    </select>
+				                </div>
+				
+				                <!-- Address -->
+				                <div class="col-md-12">
+				                    <label for="address" class="form-label">
+				                        <i class="fas fa-location-dot me-1 text-warning"></i> Address
+				                    </label>
+				                    <textarea th:field="*{address}" class="form-control" id="address" rows="3" required></textarea>
+				                </div>
+				
+				            </div>
+				        </div>
+				    </div>
+				
+				    <!-- Modal Footer -->
+				    <div class="modal-footer">
+				        <button type="submit" class="btn btn-primary">Update</button>
+				        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+				    </div>
+				</form>
+
+            </div>
+        </div>
+    </div>
+
+
+<!-- ✅ Bootstrap JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</div>
+</body>
+</html>

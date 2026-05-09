@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Assign User to Department</title>
+</head>
+<body>
+<h2>Assign User to Technical Support Department</h2>
+<form th:action="@{/admin/assign-user-department}" method="post" th:object="${user}">
+    <label>Username:</label>
+    <select th:field="*{id}">
+        <option th:each="u : ${users}" th:value="${u.id}" th:text="${u.username}"></option>
+    </select>
+    <br>
+    <label>Department:</label>
+    <select name="departmentId">
+        <option th:each="d : ${departments}" th:value="${d.id}" th:text="${d.name}"></option>
+    </select>
+    <br><br>
+    <button type="submit">Assign</button>
+</form>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/admin-layout}">
+
+<head>
+    <title>Edit Department</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        .edit-form-container {
+            max-width: 520px;
+            margin: 40px auto;
+            background-color: #fff;
+            padding: 30px 35px;
+            border-radius: 12px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.1);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .edit-form-container h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            font-weight: 600;
+            font-size: 22px;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: 600;
+            color: #34495e;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 6px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-start;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .form-actions button,
+        .form-actions a {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .btn-update {
+            background-color: #3498db;
+            color: #fff;
+        }
+
+        .btn-update:hover {
+            background-color: #2980b9;
+        }
+
+        .btn-cancel {
+            background-color: #bdc3c7;
+            color: #fff;
+        }
+
+        .btn-cancel:hover {
+            background-color: #95a5a6;
+        }
+    </style>
+</head>
+
+<body>
+<!-- ✅ Content Section injected into layout -->
+<section layout:fragment="content">
+    <div class="edit-form-container">
+        <h2><i class="fas fa-edit"></i> Edit Department</h2>
+
+        <!-- ✅ Edit Form -->
+        <form th:action="@{/admin/technical-support/update}" 
+              th:object="${department}" 
+              method="post" 
+              autocomplete="off">
+
+            <!-- ✅ Hidden ID for update binding -->
+            <input type="hidden" th:field="*{id}" />
+
+            <!-- ✅ Department Name -->
+            <label for="departmentName">Department Name:</label>
+            <input type="text" id="departmentName" th:field="*{departmentName}"
+                   required maxlength="100" placeholder="Enter department name" />
+
+            <!-- ✅ Description -->
+            <label for="description">Description:</label>
+            <input type="text" id="description" th:field="*{description}" 
+                   maxlength="250" placeholder="Enter department description" />
+
+            <!-- ✅ Contact Email -->
+            <label for="contactEmail">Contact Email:</label>
+            <input type="email" id="contactEmail" th:field="*{contactEmail}" 
+                   placeholder="example@domain.com" />
+
+            <!-- ✅ Buttons -->
+            <div class="form-actions">
+                <button type="submit" class="btn-update">
+                    <i class="fas fa-check-circle"></i> Update
+                </button>
+                <a th:href="@{/admin/technical-support}" class="btn-cancel">
+                    <i class="fas fa-times-circle"></i> Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</section>
+</body>
+</html>

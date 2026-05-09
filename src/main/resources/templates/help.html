@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/user-layout}">
+<head>
+		<link rel="stylesheet" th:href="@{/css/user-style.css}">
+    <title>Help & Support</title>
+    <style type="text/css">
+    	.card {
+    background-color: #fff;
+    padding: 35px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    max-width: 800px;
+    margin: auto;
+	}
+
+.card label {
+    display: block;
+    margin-top: 18px;
+    margin-bottom: 6px;
+    font-weight: bold;
+    color: #333;
+}
+
+.card input[type="text"],
+.card input[type="email"],
+.card input[type="date"],
+.card select,
+.card textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 15px;
+    background-color: #f9f9f9;
+    transition: all 0.2s ease;
+}
+
+.card input:focus,
+.card select:focus,
+.card textarea:focus {
+    border-color: #007BFF;
+    background-color: #fff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+    outline: none;
+}
+
+.primary-btn {
+    margin-top: 30px;
+    background-color: #007BFF;
+    color: white;
+    padding: 12px 28px;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.primary-btn:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+.success-message {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #d4edda;
+    color: #155724;
+    border-left: 5px solid #28a745;
+    border-radius: 6px;
+    max-width: 800px;
+    margin: 20px auto 0 auto;
+}
+.error-message {
+    color: red;
+    font-size: 13px;
+    margin-top: 4px;
+    display: block;
+}
+input.error, select.error, textarea.error {
+    border-color: red;
+    background-color: #fff5f5;
+}
+	
+    </style>
+</head>
+<body>
+
+<!-- MAIN CONTENT -->
+<div layout:fragment="content" class="main-content">
+    <h2><i class="fas fa-life-ring"></i> Help and Support</h2>
+
+
+    <!-- SUCCESS MESSAGE -->
+    <div th:if="${param.success}" class="success-message">
+        ✅ Thank you! Your request has been submitted successfully.
+    </div>
+
+
+   <form th:action="@{/user/help}" th:object="${helpRequest}" method="post" class="card" id="helpForm" novalidate>
+
+    <!-- Name -->
+    <label for="name">Your Name:</label>
+    <input type="text" th:field="*{name}" id="name" placeholder="Enter your name" required>
+    <small class="error-message" id="nameError"></small>
+
+    <!-- Email -->
+    <label for="email">Email Address:</label>
+    <input type="email" th:field="*{email}" id="email" placeholder="example@email.com" required>
+    <small class="error-message" id="emailError"></small>
+
+    <!-- Phone -->
+    <label for="number">Phone Number:</label>
+    <input type="text" th:field="*{number}" id="number" placeholder="1234567890" required>
+    <small class="error-message" id="numberError"></small>
+
+    <!-- Category -->
+    <label for="category">Issue Category:</label>
+    <select th:field="*{category}" id="category" required>
+        <option value="">--Select--</option>
+        <option value="Technical">Technical</option>
+        <option value="Billing">Billing</option>
+        <option value="General">General</option>
+    </select>
+    <small class="error-message" id="categoryError"></small>
+
+    <!-- Subject -->
+    <label for="subject">Subject:</label>
+    <input type="text" th:field="*{subject}" id="subject" placeholder="Enter subject" required>
+    <small class="error-message" id="subjectError"></small>
+
+    <!-- Priority -->
+    <label for="priority">Priority:</label>
+    <select th:field="*{priority}" id="priority" required>
+        <option value="">--Select--</option>
+        <option value="Low">Low</option>
+        <option value="Medium">Medium</option>
+        <option value="High">High</option>
+    </select>
+    <small class="error-message" id="priorityError"></small>
+
+    <!-- Message -->
+    <label for="message">Message:</label>
+    <textarea th:field="*{message}" id="message" rows="5" placeholder="Describe your issue..." required></textarea>
+    <small class="error-message" id="messageError"></small>
+
+    <!-- Date -->
+    <label for="issueDate">Issue Date:</label>
+    <input type="date" th:field="*{issueDate}" id="issueDate" required>
+    <small class="error-message" id="dateError"></small>
+
+    <button type="submit" class="primary-btn"><i class="fas fa-paper-plane"></i> Submit Request</button>
+</form>
+
+
+<script>
+document.getElementById("helpForm").addEventListener("submit", function(event) {
+    let isValid = true;
+
+    // Reset errors
+    document.querySelectorAll(".error-message").forEach(e => e.textContent = "");
+    document.querySelectorAll(".error").forEach(el => el.classList.remove("error"));
+
+    // Name
+    const name = document.getElementById("name");
+    if (name.value.trim().length < 4) {
+        document.getElementById("nameError").textContent = "Name must be at least 4 characters.";
+        name.classList.add("error");
+        isValid = false;
+    }
+
+    // Email
+    const email = document.getElementById("email");
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email.value.trim())) {
+        document.getElementById("emailError").textContent = "Enter a valid email address.";
+        email.classList.add("error");
+        isValid = false;
+    }
+
+    // Phone number
+    const number = document.getElementById("number");
+    const phonePattern = /^[6-9]\d{9}$/;
+    if (!phonePattern.test(number.value.trim())) {
+        document.getElementById("numberError").textContent = "Enter a valid 10-digit phone number starting with 6-9.";
+        number.classList.add("error");
+        isValid = false;
+    }
+
+    // Category
+    const category = document.getElementById("category");
+    if (category.value === "") {
+        document.getElementById("categoryError").textContent = "Please select a category.";
+        category.classList.add("error");
+        isValid = false;
+    }
+
+    // Subject
+    const subject = document.getElementById("subject");
+    if (subject.value.trim().length < 3) {
+        document.getElementById("subjectError").textContent = "Subject must be at least 3 characters.";
+        subject.classList.add("error");
+        isValid = false;
+    }
+
+    // Priority
+    const priority = document.getElementById("priority");
+    if (priority.value === "") {
+        document.getElementById("priorityError").textContent = "Please select priority.";
+        priority.classList.add("error");
+        isValid = false;
+    }
+
+    // Message
+    const message = document.getElementById("message");
+    if (message.value.trim().length < 10) {
+        document.getElementById("messageError").textContent = "Message must be at least 10 characters.";
+        message.classList.add("error");
+        isValid = false;
+    }
+
+    // Date
+    const date = document.getElementById("issueDate");
+    if (date.value === "") {
+        document.getElementById("dateError").textContent = "Please select a date.";
+        date.classList.add("error");
+        isValid = false;
+    }
+
+    if (!isValid) {
+        event.preventDefault(); // Stop form from submitting
+    }
+});
+</script>
+
+
+
+</div>
+
+</body>
+</html>

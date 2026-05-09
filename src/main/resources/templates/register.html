@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>User Registration</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- ✅ Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #ddeeff, #e6f0ff);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .form-container {
+            background: #fff;
+            padding: 30px 35px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 480px;
+        }
+
+        .form-container h2 {
+            text-align: center;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .form-container p {
+            text-align: center;
+            font-size: 14px;
+            color: #777;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: 500;
+            margin-top: 15px;
+            display: block;
+            color: #333;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px 12px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        .gender-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .gender-container label {
+            font-weight: normal;
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .gender-container input[type="radio"] {
+            margin-right: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            border: none;
+            color: white;
+            font-size: 16px;
+            margin-top: 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .error {
+            margin-top: 10px;
+            text-align: center;
+            color: red;
+            font-size: 14px;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        .login-link a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <h2 th:text="'Register as ' + ${user.role}"></h2>
+    <p>Please fill the details below to Sign Up</p>
+
+    <form th:action="@{/saveUser}" method="post" th:object="${user}">
+
+        <!-- ✅ Full Name -->
+        <label for="fullName">Full Name:</label>
+        <input type="text" th:field="*{fullName}" id="fullName" placeholder="Enter your full name" required />
+
+        <!-- ✅ Gender -->
+        <label>Gender:</label>
+        <div class="gender-container">
+            <label><input type="radio" th:field="*{gender}" value="Male" /> Male</label>
+            <label><input type="radio" th:field="*{gender}" value="Female" /> Female</label>
+            <label><input type="radio" th:field="*{gender}" value="Other" /> Other</label>
+        </div>
+
+        <!-- ✅ Address -->
+        <label for="address">Address:</label>
+        <input type="text" th:field="*{address}" id="address" placeholder="Enter your address" required />
+
+        <!-- ✅ Username -->
+        <label for="username">Username:</label>
+        <input type="text" th:field="*{username}" id="username" required />
+
+        <!-- ✅ Phone -->
+        <label for="phone">Phone:</label>
+        <input type="text" th:field="*{phone}" id="phone" required />
+
+        <!-- ✅ Email -->
+        <label for="email">Email:</label>
+        <input type="email" th:field="*{email}" id="email" required />
+
+        <!-- ✅ Password -->
+        <label for="password">Password:</label>
+        <input type="password" th:field="*{password}" id="password" required />
+
+        <!-- ✅ Hidden Role -->
+        <input type="hidden" th:field="*{role}" />
+
+        <!-- ✅ Submit -->
+        <button type="submit">Sign Up</button>
+    </form>
+
+    <p class="error" th:if="${error}" th:text="${error}"></p>
+
+    <div class="login-link">
+        Already have an account? <a th:href="@{/login}">Login here</a>
+    </div>
+</div>
+
+</body>
+</html>
