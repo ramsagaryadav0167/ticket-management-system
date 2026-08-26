@@ -22,7 +22,7 @@ The application is designed to streamline support ticket handling, department wo
 - Update Ticket Status
 - Ticket Tracking System
 - Ticket History Management
-  Agent-wise Ticket Allocation
+- Agent-wise Ticket Allocation
 - Ticket Detail View
 - Ticket Status Monitoring
 
