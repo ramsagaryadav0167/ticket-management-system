@@ -22,18 +22,9 @@ The application is designed to streamline support ticket handling, department wo
 - Update Ticket Status
 - Ticket Tracking System
 - Ticket History Management
-- Department-wise Ticket Allocation
+  Agent-wise Ticket Allocation
 - Ticket Detail View
 - Ticket Status Monitoring
-
----
-
-## 🏢 Department Modules
-- HR Department
-- Finance Department
-- IT Support Department
-- Operations Department
-- Legal Department
 
 ---
 
@@ -47,10 +38,10 @@ The application is designed to streamline support ticket handling, department wo
 ---
 
 ## 👨‍💼 Admin Features
-- Manage Departments
-- Manage Technical Support Teams
+- Manage Agents
+- Manage Technical Support 
 - Monitor Ticket Activities
-- User Management
+- Agent Management
 - Ticket Workflow Monitoring
 
 ---
@@ -69,7 +60,7 @@ The application is designed to streamline support ticket handling, department wo
 
 | Technology | Version / Usage |
 |---|---|
-| Java | 17 |
+| Java | 21 |
 | Spring Boot | 3.5 |
 | Spring Security | Authentication & Authorization |
 | Spring Data JPA | Database Operations |
@@ -91,7 +82,6 @@ TicketManagementSystem/
 │   │   ├── java/
 │   │   │   └── com/
 │   │   │       └── railbit/
-│   │   │           └── TicketManagementSystem/
 │   │   │               ├── controller/
 │   │   │               ├── service/
 │   │   │               ├── repository/
