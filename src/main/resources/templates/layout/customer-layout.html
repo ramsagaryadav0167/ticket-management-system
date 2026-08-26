@@ -14,7 +14,7 @@
 
     <!-- ✅ Top Navigation -->
     <div class="navbar">
-        <h1>🎫 Ticket Management System</h1>
+        <h1>Management System</h1>
         <div class="nav-links">
 		    <a th:href="@{/customer/profile}" class="nav-icon-profile" title="Profile">
 		        <i class="fas fa-user-cog"></i>
@@ -29,8 +29,6 @@
     <!-- ✅ Sidebar -->
     <div class="sidebar">
     	 <a th:href="@{/customer/dashboard}"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-        <a th:href="@{/customer/create_ticket}"><i class="fas fa-plus-circle"></i> Create Ticket</a>
-        <a th:href="@{/customer/view_tickets}"><i class="fas fa-ticket-alt"></i> View Tickets</a>
         <a th:href="@{/customer/profile}"><i class="fas fa-user"></i> Profile</a>
       
         <a th:href="@{/customer/help}"><i class="fas fa-question-circle"></i> Help</a>
@@ -45,7 +43,7 @@
 
     <!-- ✅ Footer -->
     <footer>
-        <p>&copy; 2025 Railbit Ticket Management System. All rights reserved.</p>
+        <p>&copy; 2025 Railbit Management System. All rights reserved.</p>
     </footer>
 
     <!-- ✅ Floating Chat Button -->
@@ -61,7 +59,7 @@
         <!-- ✅ Dropdown -->
         <div class="chat-select-area">
             <select id="chatTarget" onchange="loadMessages()">
-                <option value="agent">👨‍🔧 Assigned Agent</option>
+                <option value="admin">👨‍💼 Support Team</option>
                 <option value="admin">👨‍💼 Admin</option>
             </select>
         </div>
@@ -273,4 +271,4 @@
 </script>
 </div>
 </body>
-</html> 
+</html>

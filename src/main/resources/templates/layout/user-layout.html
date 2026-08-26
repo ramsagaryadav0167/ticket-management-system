@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
     <!-- 🌐 Page Title with Layout Pattern -->
-    <title layout:title-pattern="$CONTENT_TITLE - Ticket System">User - Ticket Management System</title>
+    <title layout:title-pattern="$CONTENT_TITLE - Management System">User - Management System</title>
 
     <!-- 🎨 FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -24,7 +24,7 @@
 
     <!-- 🔝 Navbar -->
     <div class="navbar">
-        <h1><i class="fas fa-ticket-alt"></i> Ticket Management System</h1>
+        <h1>Management System</h1>
         <div class="user-info">
             <a th:href="@{/user/profile}" class="profile-button">
                 <i class="fas fa-user-cog"></i>
@@ -38,8 +38,6 @@
     <!-- 📚 Sidebar Navigation -->
     <div class="sidebar">
         <a th:href="@{/user/dashboard}"><i class="fa-solid fa-gauge"></i> Dashboard</a>
-        <a th:href="@{/user/create_ticket}"><i class="fas fa-plus-circle"></i> Create Ticket</a>
-        <a th:href="@{/user/view_tickets}"><i class="fas fa-list"></i> View Tickets</a>
         <a th:href="@{/user/services}"><i class="fas fa-tools"></i> Our Services</a>
         <a th:href="@{/user/help}"><i class="fas fa-question-circle"></i> Help</a>
         <a th:href="@{/user/profile}"><i class="fas fa-user-circle"></i> Profile</a>
@@ -53,7 +51,7 @@
 
     <!-- 📎 Footer -->
     <footer>
-        <p>© 2025 Ticket Management System | All rights reserved.</p>
+        <p>© 2025 Management System | All rights reserved.</p>
     </footer>
 </div>
 
