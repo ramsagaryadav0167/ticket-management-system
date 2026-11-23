@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head><title>Departments</title></head>
+<body>
+<h1 layout:fragment="page-title">Departments</h1>
+<div layout:fragment="content">
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="row g-3">
+                <div class="col-md-6" th:each="s : ${summaries}">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <h2 class="h6 mb-1">
+                                    <a th:href="@{/admin/departments/{id}(id=${s.department().id})}" th:text="${s.department().name}"
+                                       class="stretched-link text-decoration-none">Dept</a>
+                                </h2>
+                                <span th:if="${s.department().active}" class="badge text-bg-success">Active</span>
+                                <span th:unless="${s.department().active}" class="badge text-bg-secondary">Inactive</span>
+                            </div>
+                            <p class="small text-muted mb-3" th:text="${s.department().description} ?: 'No description'">desc</p>
+                            <div class="d-flex justify-content-between text-center small">
+                                <div><div class="fw-bold fs-5" th:text="${s.agentCount()}">0</div>Agents</div>
+                                <div><div class="fw-bold fs-5 text-primary" th:text="${s.queued()}">0</div>Queue</div>
+                                <div><div class="fw-bold fs-5 text-warning" th:text="${s.pending()}">0</div>Pending</div>
+                                <div><div class="fw-bold fs-5 text-success" th:text="${s.completed()}">0</div>Completed</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12" th:if="${#lists.isEmpty(summaries)}">
+                    <div class="card card-body text-center text-muted py-5">No departments yet. Create the first one.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header"><i class="bi bi-plus-circle me-1"></i> New department</div>
+                <div class="card-body">
+                    <form th:action="@{/admin/departments}" th:object="${form}" method="post" class="vstack gap-3" novalidate>
+                        <div>
+                            <label for="name" class="form-label">Name</label>
+                            <input th:field="*{name}" class="form-control" th:errorclass="is-invalid" required maxlength="100"
+                                   placeholder="e.g. IT Support">
+                            <div class="invalid-feedback" th:errors="*{name}"></div>
+                        </div>
+                        <div>
+                            <label for="description" class="form-label">Description</label>
+                            <textarea th:field="*{description}" rows="2" class="form-control" th:errorclass="is-invalid" maxlength="500"></textarea>
+                            <div class="invalid-feedback" th:errors="*{description}"></div>
+                        </div>
+                        <div>
+                            <label for="contactEmail" class="form-label">Contact email</label>
+                            <input th:field="*{contactEmail}" type="email" class="form-control" th:errorclass="is-invalid" maxlength="150">
+                            <div class="invalid-feedback" th:errors="*{contactEmail}"></div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Create department</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

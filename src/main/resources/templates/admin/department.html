@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head><title th:text="${department.name}">Department</title></head>
+<body>
+<h1 layout:fragment="page-title" th:text="${department.name}">Department</h1>
+<div layout:fragment="content">
+
+    <a th:href="@{/admin/departments}" class="d-inline-block mb-3 text-decoration-none"><i class="bi bi-arrow-left"></i> All departments</a>
+
+    <div th:unless="${department.active}" class="alert alert-secondary">
+        This department is inactive: customers can't raise new tickets for it and tickets can't be assigned here.
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3"><div th:replace="~{fragments/components :: stat('Agents', ${summary.agentCount()}, 'people', 'text-secondary')}"></div></div>
+        <div class="col-6 col-md-3"><div th:replace="~{fragments/components :: stat('In queue', ${summary.queued()}, 'inbox', 'text-primary')}"></div></div>
+        <div class="col-6 col-md-3"><div th:replace="~{fragments/components :: stat('Pending', ${summary.pending()}, 'hourglass-split', 'text-warning')}"></div></div>
+        <div class="col-6 col-md-3"><div th:replace="~{fragments/components :: stat('Completed', ${summary.completed()}, 'check2-circle', 'text-success')}"></div></div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-xl-8">
+            <!-- Team: grow or shrink -->
+            <div class="card mb-4">
+                <div class="card-header d-flex flex-wrap gap-2 justify-content-between align-items-center">
+                    <span><i class="bi bi-people me-1"></i> Team &amp; performance</span>
+                    <div class="d-flex flex-wrap gap-2">
+                        <form th:action="@{/admin/departments/{id}/agents(id=${department.id})}" method="post"
+                              class="d-flex gap-2" th:unless="${#lists.isEmpty(candidates)}">
+                            <select name="agentId" class="form-select form-select-sm w-auto" required aria-label="Existing agent">
+                                <option value="">Add existing agent…</option>
+                                <option th:each="a : ${candidates}" th:value="${a.id}"
+                                        th:text="${a.fullName} + ' (' + (${a.department != null} ? ${a.department.name} : 'no department') + ')' + (${a.enabled} ? '' : ' – inactive')">Agent</option>
+                            </select>
+                            <button type="submit" class="btn btn-sm btn-outline-primary"><i class="bi bi-person-plus"></i> Add</button>
+                        </form>
+                        <button class="btn btn-sm btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#newAgentForm">
+                            <i class="bi bi-plus-lg"></i> New agent</button>
+                    </div>
+                </div>
+                <div class="card-body pb-0">
+                    <p class="small text-muted mb-2">Moving an agent from another department sends their unfinished tickets
+                        back to that department's queue so nothing gets stuck.</p>
+                    <div th:replace="~{fragments/admin :: newAgentForm(@{/admin/departments/{id}/agents/new(id=${department.id})}, null, ${openAgentForm} ?: false)}"></div>
+                </div>
+                <div th:replace="~{fragments/admin :: performanceTable(${team}, false, ${department.id})}"></div>
+            </div>
+
+            <div class="card">
+                <div class="card-body d-flex flex-wrap justify-content-between align-items-center gap-2">
+                    <span class="text-muted small">Tickets of this department</span>
+                    <div class="d-flex gap-2">
+                        <a class="btn btn-sm btn-outline-primary" th:href="@{/admin/tickets(departmentId=${department.id}, status='OPEN')}">Queue</a>
+                        <a class="btn btn-sm btn-outline-secondary" th:href="@{/admin/tickets(departmentId=${department.id})}">All tickets</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-4">
+            <div class="card mb-4">
+                <div class="card-header">Department details</div>
+                <div class="card-body">
+                    <form th:action="@{/admin/departments/{id}(id=${department.id})}" th:object="${form}" method="post"
+                          class="vstack gap-3" novalidate>
+                        <div>
+                            <label for="name" class="form-label">Name</label>
+                            <input th:field="*{name}" class="form-control" th:errorclass="is-invalid" required maxlength="100">
+                            <div class="invalid-feedback" th:errors="*{name}"></div>
+                        </div>
+                        <div>
+                            <label for="description" class="form-label">Description</label>
+                            <textarea th:field="*{description}" rows="2" class="form-control" th:errorclass="is-invalid" maxlength="500"></textarea>
+                            <div class="invalid-feedback" th:errors="*{description}"></div>
+                        </div>
+                        <div>
+                            <label for="contactEmail" class="form-label">Contact email</label>
+                            <input th:field="*{contactEmail}" type="email" class="form-control" th:errorclass="is-invalid" maxlength="150">
+                            <div class="invalid-feedback" th:errors="*{contactEmail}"></div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card border-danger-subtle">
+                <div class="card-header">Status</div>
+                <div class="card-body vstack gap-2">
+                    <form th:action="@{/admin/departments/{id}/active(id=${department.id})}" method="post">
+                        <input type="hidden" name="active" th:value="${!department.active}">
+                        <button type="submit" class="btn btn-sm w-100"
+                                th:classappend="${department.active} ? 'btn-outline-warning' : 'btn-outline-success'"
+                                th:text="${department.active} ? 'Deactivate department' : 'Activate department'">Toggle</button>
+                    </form>
+                    <form th:action="@{/admin/departments/{id}/delete(id=${department.id})}" method="post"
+                          data-confirm="Delete this department permanently?">
+                        <button type="submit" class="btn btn-sm btn-outline-danger w-100"
+                                th:disabled="${summary.agentCount() > 0 or summary.total() > 0}">Delete department</button>
+                    </form>
+                    <small class="text-muted" th:if="${summary.agentCount() > 0 or summary.total() > 0}">
+                        Departments with agents or tickets can't be deleted – deactivate instead.</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

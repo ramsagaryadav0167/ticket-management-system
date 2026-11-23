@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!-- Flash messages set by controllers (success / error) -->
+<th:block th:fragment="flash">
+    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="bi bi-check-circle me-1"></i><span th:text="${success}">Done</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="bi bi-exclamation-triangle me-1"></i><span th:text="${error}">Error</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+</th:block>
+
+<span th:fragment="status(status)" class="badge badge-status" th:classappend="'status-' + ${status.name()}"
+      th:text="${status.label()}">OPEN</span>
+
+<span th:fragment="priority(priority)" th:classappend="'priority-' + ${priority.name()}">
+    <i class="bi bi-flag-fill"></i> <th:block th:text="${#strings.capitalize(#strings.toLowerCase(priority.name()))}">Medium</th:block>
+</span>
+
+<!-- Stat tile: label, value, Bootstrap icon name, text colour class -->
+<div th:fragment="stat(label, value, icon, color)" class="card stat-card h-100">
+    <div class="d-flex justify-content-between align-items-start">
+        <div>
+            <div class="label" th:text="${label}">Label</div>
+            <div class="value" th:classappend="${color}" th:text="${value}">0</div>
+        </div>
+        <i class="icon bi" th:classappend="'bi-' + ${icon} + ' ' + ${color}"></i>
+    </div>
+</div>
+
+<!-- Rating stars for an average (Double) or null -->
+<span th:fragment="rating(avg, count)">
+    <th:block th:if="${avg != null}">
+        <i class="bi bi-star-fill text-warning"></i>
+        <span th:text="${#numbers.formatDecimal(avg, 1, 1)}">4.5</span>
+        <small class="text-muted" th:text="'(' + ${count} + ')'">(3)</small>
+    </th:block>
+    <span th:if="${avg == null}" class="text-muted">–</span>
+</span>
+
+<!-- Completion bar for an AgentPerformance -->
+<div th:fragment="completion(p)" class="d-flex align-items-center gap-2">
+    <div class="progress flex-grow-1" style="height: 6px; min-width: 60px;" role="progressbar"
+         th:aria-valuenow="${p.completionRate()}" aria-valuemin="0" aria-valuemax="100">
+        <div class="progress-bar bg-success" th:style="'width:' + ${p.completionRate()} + '%'"></div>
+    </div>
+    <small class="text-muted" th:text="${p.completionRate()} + '%'">0%</small>
+</div>
+
+<!--
+  Department-wise assignment form.
+  ticket: the ticket; returnTo: where to come back to; compact: inline layout for tables.
+  Needs model attributes: departments (active), assignableAgents (List<AgentPerformance>).
+-->
+<form th:fragment="assignForm(ticket, returnTo, compact)" method="post"
+      th:action="@{/admin/tickets/{id}/assign(id=${ticket.id})}"
+      th:class="${compact} ? 'd-flex flex-wrap gap-2 align-items-center' : 'vstack gap-2'">
+    <input type="hidden" name="returnTo" th:value="${returnTo}">
+    <select name="departmentId" class="form-select form-select-sm w-auto" data-department-select
+            aria-label="Department">
+        <option th:each="d : ${departments}" th:value="${d.id}" th:text="${d.name}"
+                th:selected="${d.id == ticket.department.id}">Department</option>
+    </select>
+    <select name="agentId" class="form-select form-select-sm w-auto" data-agent-select aria-label="Agent">
+        <option value="">Auto – least loaded agent</option>
+        <option th:each="a : ${assignableAgents}" th:value="${a.agentId}"
+                th:attr="data-department=${a.departmentId}"
+                th:disabled="${ticket.agent != null and a.agentId == ticket.agent.id}"
+                th:text="${a.fullName} + ' · ' + ${a.pending} + ' pending'">Agent</option>
+    </select>
+    <button type="submit" class="btn btn-sm btn-primary">
+        <i class="bi bi-person-check"></i>
+        <span th:text="${ticket.agent == null} ? 'Assign' : 'Reassign'">Assign</span>
+    </button>
+</form>
+
+<!-- Pagination for a Spring Data Page; url is the list URL with its current filters (no page param) -->
+<nav th:fragment="pager(page, url)" th:if="${page.totalPages > 1}" aria-label="Pages">
+    <ul class="pagination pagination-sm mb-0">
+        <li class="page-item" th:classappend="${page.first} ? 'disabled'">
+            <a class="page-link" th:href="@{${url}(page=${page.number - 1})}">Previous</a>
+        </li>
+        <li class="page-item disabled">
+            <span class="page-link" th:text="${page.number + 1} + ' / ' + ${page.totalPages}">1 / 1</span>
+        </li>
+        <li class="page-item" th:classappend="${page.last} ? 'disabled'">
+            <a class="page-link" th:href="@{${url}(page=${page.number + 1})}">Next</a>
+        </li>
+    </ul>
+</nav>
+
+</body>
+</html>

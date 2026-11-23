@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout/main}">
+<head><title th:text="'Ticket #' + ${ticket.id}">Ticket</title></head>
+<body>
+<h1 layout:fragment="page-title" th:text="'Ticket #' + ${ticket.id}">Ticket</h1>
+<div layout:fragment="content"
+     th:with="me=${#authentication.principal},
+              status=${ticket.status.name()},
+              pending=${ticket.status.isPending()}">
+
+    <a th:href="${me.admin} ? @{/admin/tickets} : @{__${basePath}__/dashboard}" class="d-inline-block mb-3 text-decoration-none">
+        <i class="bi bi-arrow-left"></i> Back</a>
+
+    <div class="row g-4">
+        <!-- Left: ticket + conversation -->
+        <div class="col-lg-8 min-w-0">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="d-flex flex-wrap justify-content-between gap-2 mb-2">
+                        <h2 class="h5 mb-0" th:text="${ticket.title}">Title</h2>
+                        <span th:replace="~{fragments/components :: status(${ticket.status})}"></span>
+                    </div>
+                    <p class="description-text mb-0" th:text="${ticket.description}">Description</p>
+                </div>
+            </div>
+
+            <div class="card" id="conversation">
+                <div class="card-header"><i class="bi bi-chat-dots me-1"></i> Conversation</div>
+                <div class="card-body conversation">
+                    <p th:if="${#lists.isEmpty(messages)}" class="text-muted text-center my-4">No messages yet.</p>
+                    <div th:each="m : ${messages}" class="message"
+                         th:classappend="${m.sender.id == me.id} ? 'mine' : 'theirs'">
+                        <div class="meta">
+                            <span th:text="${m.sender.fullName}">Name</span>
+                            <span th:if="${m.sender.role.name() != 'CUSTOMER'}"
+                                  th:text="'· ' + ${#strings.toLowerCase(m.sender.role)}">· agent</span>
+                            · <span th:text="${#temporals.format(m.createdAt, 'dd MMM, HH:mm')}">time</span>
+                        </div>
+                        <div class="body" th:text="${m.body}">Message</div>
+                    </div>
+                </div>
+                <div class="card-footer bg-white" th:if="${status != 'CLOSED'}">
+                    <form th:action="@{__${basePath}__/tickets/{id}/messages(id=${ticket.id})}" method="post" class="d-flex gap-2">
+                        <textarea name="body" class="form-control" rows="2" maxlength="3000" required
+                                  placeholder="Write a message…" aria-label="Message"></textarea>
+                        <button type="submit" class="btn btn-primary align-self-end"><i class="bi bi-send"></i></button>
+                    </form>
+                </div>
+                <div class="card-footer bg-white text-muted small" th:if="${status == 'CLOSED'}">
+                    This ticket is closed. Raise a new ticket if you need more help.
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: details + actions + history -->
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-header">Details</div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between"><span class="text-muted">Department</span>
+                        <span th:text="${ticket.department.name}">IT</span></li>
+                    <li class="list-group-item d-flex justify-content-between"><span class="text-muted">Priority</span>
+                        <span th:replace="~{fragments/components :: priority(${ticket.priority})}"></span></li>
+                    <li class="list-group-item d-flex justify-content-between"><span class="text-muted">Customer</span>
+                        <span th:text="${ticket.customer.fullName}">Customer</span></li>
+                    <li class="list-group-item d-flex justify-content-between"><span class="text-muted">Agent</span>
+                        <span>
+                            <a th:if="${ticket.agent != null and me.admin}" th:href="@{/admin/agents/{id}(id=${ticket.agent.id})}"
+                               th:text="${ticket.agent.fullName}">Agent</a>
+                            <span th:if="${ticket.agent != null and !me.admin}" th:text="${ticket.agent.fullName}">Agent</span>
+                            <span th:if="${ticket.agent == null}" class="text-muted">Unassigned</span>
+                        </span></li>
+                    <li class="list-group-item d-flex justify-content-between"><span class="text-muted">Created</span>
+                        <span th:text="${#temporals.format(ticket.createdAt, 'dd MMM yyyy, HH:mm')}">date</span></li>
+                    <li class="list-group-item d-flex justify-content-between" th:if="${ticket.resolvedAt != null}">
+                        <span class="text-muted">Resolved</span>
+                        <span th:text="${#temporals.format(ticket.resolvedAt, 'dd MMM yyyy, HH:mm')}">date</span></li>
+                </ul>
+            </div>
+
+            <!-- Admin: department-wise assign / reassign, close -->
+            <div class="card mb-4" sec:authorize="hasRole('ADMIN')" th:if="${status != 'CLOSED'}">
+                <div class="card-header" th:text="${ticket.agent == null} ? 'Assign ticket' : 'Reassign ticket'">Assign</div>
+                <div class="card-body">
+                    <th:block th:if="${!ticket.status.isCompleted()}">
+                        <p class="small text-muted mb-2">Pick the department, then a specific agent or let the system choose
+                            the agent with the fewest pending tickets.</p>
+                        <form th:replace="~{fragments/components :: assignForm(${ticket}, '/admin/tickets/' + ${ticket.id}, false)}"></form>
+                        <hr>
+                    </th:block>
+                    <form th:action="@{/admin/tickets/{id}/close(id=${ticket.id})}" method="post"
+                          data-confirm="Close this ticket without a customer rating?">
+                        <button type="submit" class="btn btn-sm btn-outline-danger w-100"><i class="bi bi-x-circle"></i> Close ticket</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Agent: start / resolve -->
+            <div class="card mb-4" sec:authorize="hasRole('AGENT')" th:if="${pending}">
+                <div class="card-header">Actions</div>
+                <div class="card-body vstack gap-2">
+                    <form th:if="${status == 'ASSIGNED'}" th:action="@{/agent/tickets/{id}/start(id=${ticket.id})}" method="post">
+                        <button type="submit" class="btn btn-outline-primary w-100"><i class="bi bi-play-circle"></i> Start working</button>
+                    </form>
+                    <form th:action="@{/agent/tickets/{id}/resolve(id=${ticket.id})}" method="post"
+                          data-confirm="Mark this ticket as resolved?">
+                        <button type="submit" class="btn btn-success w-100"><i class="bi bi-check2-circle"></i> Mark as resolved</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Customer: rate or reopen a resolved ticket -->
+            <div class="card mb-4 border-warning" sec:authorize="hasRole('CUSTOMER')" th:if="${status == 'RESOLVED'}">
+                <div class="card-header">Was your issue resolved?</div>
+                <div class="card-body">
+                    <form th:action="@{/customer/tickets/{id}/rate(id=${ticket.id})}" method="post" class="vstack gap-2">
+                        <label for="score" class="form-label mb-0">Rate your agent</label>
+                        <select id="score" name="score" class="form-select" required>
+                            <option value="5">★★★★★ Excellent</option>
+                            <option value="4">★★★★ Good</option>
+                            <option value="3">★★★ Okay</option>
+                            <option value="2">★★ Poor</option>
+                            <option value="1">★ Very poor</option>
+                        </select>
+                        <textarea name="feedback" class="form-control" rows="2" maxlength="1000"
+                                  placeholder="Feedback (optional)" aria-label="Feedback"></textarea>
+                        <button type="submit" class="btn btn-primary">Submit rating &amp; close</button>
+                    </form>
+                    <hr>
+                    <form th:action="@{/customer/tickets/{id}/reopen(id=${ticket.id})}" method="post">
+                        <button type="submit" class="btn btn-sm btn-outline-secondary w-100">Not fixed – reopen ticket</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card mb-4" th:if="${rating != null}">
+                <div class="card-header">Customer rating</div>
+                <div class="card-body">
+                    <div class="fs-5 text-warning">
+                        <i th:each="i : ${#numbers.sequence(1, 5)}" class="bi"
+                           th:classappend="${i <= rating.score} ? 'bi-star-fill' : 'bi-star'"></i>
+                    </div>
+                    <p class="mb-0 mt-2 description-text" th:if="${rating.feedback != null}" th:text="${rating.feedback}">Feedback</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">History</div>
+                <div class="card-body">
+                    <ul class="timeline">
+                        <li th:each="a : ${activities}">
+                            <div th:text="${a.description}">Created</div>
+                            <small class="text-muted">
+                                <span th:text="${a.actor != null} ? ${a.actor.fullName} : 'System'">Who</span> ·
+                                <span th:text="${#temporals.format(a.createdAt, 'dd MMM, HH:mm')}">when</span>
+                            </small>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

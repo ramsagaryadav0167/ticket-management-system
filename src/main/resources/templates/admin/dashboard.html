@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head><title>Admin dashboard</title></head>
+<body>
+<h1 layout:fragment="page-title">Dashboard</h1>
+<div layout:fragment="content">
+
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-lg-2"><div th:replace="~{fragments/components :: stat('Total tickets', ${stats.total()}, 'inboxes', 'text-dark')}"></div></div>
+        <div class="col-6 col-lg-2"><div th:replace="~{fragments/components :: stat('Unassigned', ${stats.queued()}, 'inbox', 'text-primary')}"></div></div>
+        <div class="col-6 col-lg-2"><div th:replace="~{fragments/components :: stat('Pending', ${stats.pending()}, 'hourglass-split', 'text-warning')}"></div></div>
+        <div class="col-6 col-lg-2"><div th:replace="~{fragments/components :: stat('Completed', ${stats.completed()}, 'check2-circle', 'text-success')}"></div></div>
+        <div class="col-6 col-lg-2"><div th:replace="~{fragments/components :: stat('Agents', ${stats.agents()}, 'person-badge', 'text-secondary')}"></div></div>
+        <div class="col-6 col-lg-2"><div th:replace="~{fragments/components :: stat('Departments', ${stats.departments()}, 'diagram-3', 'text-secondary')}"></div></div>
+    </div>
+
+    <!-- Unassigned queue with department-wise assignment -->
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span><i class="bi bi-inbox me-1"></i> Unassigned tickets
+                <span class="badge text-bg-primary" th:text="${#lists.size(queue)}">0</span></span>
+            <small class="text-muted">Most urgent first</small>
+        </div>
+        <div class="table-responsive" th:unless="${#lists.isEmpty(queue)}">
+            <table class="table mb-0">
+                <thead><tr><th>#</th><th>Ticket</th><th>Priority</th><th>Waiting since</th><th>Assign to (department → agent)</th></tr></thead>
+                <tbody>
+                <tr th:each="t : ${queue}">
+                    <td th:text="${t.id}">1</td>
+                    <td class="min-w-0">
+                        <a th:href="@{/admin/tickets/{id}(id=${t.id})}" th:text="${t.title}">Title</a>
+                        <div class="small text-muted" th:text="${t.customer.fullName} + ' · ' + ${t.department.name}">Customer · Dept</div>
+                    </td>
+                    <td><span th:replace="~{fragments/components :: priority(${t.priority})}"></span></td>
+                    <td th:text="${#temporals.format(t.createdAt, 'dd MMM, HH:mm')}">date</td>
+                    <td><form th:replace="~{fragments/components :: assignForm(${t}, '/admin/dashboard', true)}"></form></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="card-body text-center text-muted py-4" th:if="${#lists.isEmpty(queue)}">
+            <i class="bi bi-check2-all fs-3"></i><p class="mb-0">All tickets are assigned.</p>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Departments -->
+        <div class="col-xl-5">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span><i class="bi bi-diagram-3 me-1"></i> Departments</span>
+                    <a th:href="@{/admin/departments}" class="small">Manage</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead><tr><th>Department</th><th class="text-end">Agents</th><th class="text-end">Queue</th><th class="text-end">Pending</th><th class="text-end">Done</th></tr></thead>
+                        <tbody>
+                        <tr th:each="s : ${departmentSummaries}">
+                            <td><a th:href="@{/admin/departments/{id}(id=${s.department().id})}" th:text="${s.department().name}">Dept</a>
+                                <span th:unless="${s.department().active}" class="badge text-bg-secondary ms-1">Inactive</span></td>
+                            <td class="text-end" th:text="${s.activeAgentCount()}">0</td>
+                            <td class="text-end" th:classappend="${s.queued() > 0 and s.activeAgentCount() == 0} ? 'text-danger fw-semibold'"
+                                th:text="${s.queued()}">0</td>
+                            <td class="text-end text-warning" th:text="${s.pending()}">0</td>
+                            <td class="text-end text-success" th:text="${s.completed()}">0</td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(departmentSummaries)}">
+                            <td colspan="5" class="text-center text-muted py-4">
+                                No departments yet. <a th:href="@{/admin/departments}">Create one</a>.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- Agent performance -->
+        <div class="col-xl-7">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span><i class="bi bi-graph-up me-1"></i> Agent performance</span>
+                    <a th:href="@{/admin/agents}" class="small">All agents</a>
+                </div>
+                <div th:replace="~{fragments/admin :: performanceTable(${agentPerformance}, true, null)}"></div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

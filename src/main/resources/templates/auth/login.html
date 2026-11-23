@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/plain}">
+<head><title>Sign in</title></head>
+<body>
+<div layout:fragment="content">
+    <div class="card">
+        <div class="card-body p-4">
+            <h2 class="h5 mb-3">Sign in</h2>
+
+            <div th:if="${param.error}" class="alert alert-danger py-2">Invalid username or password, or the account is disabled.</div>
+            <div th:if="${param.logout}" class="alert alert-info py-2">You have been signed out.</div>
+            <div th:if="${param.registered}" class="alert alert-success py-2">Account created. You can sign in now.</div>
+
+            <form th:action="@{/login}" method="post" class="vstack gap-3">
+                <div>
+                    <label for="username" class="form-label">Username</label>
+                    <input id="username" name="username" class="form-control" required autofocus autocomplete="username">
+                </div>
+                <div>
+                    <label for="password" class="form-label">Password</label>
+                    <input id="password" name="password" type="password" class="form-control" required autocomplete="current-password">
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Sign in</button>
+            </form>
+        </div>
+    </div>
+    <p class="text-center mt-3 text-muted">New customer? <a th:href="@{/register}">Create an account</a></p>
+</div>
+</body>
+</html>

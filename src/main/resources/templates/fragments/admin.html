@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<!--
+  Agent performance table (List<AgentPerformance>).
+  showDepartment: show the department column; removeFromDepartmentId: when set, adds a Remove button.
+-->
+<div th:fragment="performanceTable(rows, showDepartment, removeFromDepartmentId)" class="table-responsive">
+    <table class="table table-hover mb-0">
+        <thead>
+        <tr>
+            <th>Agent</th>
+            <th th:if="${showDepartment}">Department</th>
+            <th class="text-end">Assigned</th>
+            <th class="text-end">Pending</th>
+            <th class="text-end">Completed</th>
+            <th style="min-width: 140px;">Completion</th>
+            <th>Rating</th>
+            <th th:if="${removeFromDepartmentId != null}"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="p : ${rows}" th:classappend="${!p.enabled()} ? 'text-muted'">
+            <td>
+                <a th:href="@{/admin/agents/{id}(id=${p.agentId()})}" th:text="${p.fullName()}" class="fw-semibold">Name</a>
+                <span th:unless="${p.enabled()}" class="badge text-bg-secondary ms-1">Inactive</span>
+                <div class="small text-muted" th:text="'@' + ${p.username()}">@user</div>
+            </td>
+            <td th:if="${showDepartment}">
+                <a th:if="${p.departmentId() != null}" th:href="@{/admin/departments/{id}(id=${p.departmentId()})}"
+                   th:text="${p.departmentName()}">Dept</a>
+                <span th:if="${p.departmentId() == null}" class="text-muted fst-italic">None</span>
+            </td>
+            <td class="text-end">
+                <a th:href="@{/admin/tickets(agentId=${p.agentId()})}" th:text="${p.assigned()}">0</a></td>
+            <td class="text-end fw-semibold text-warning" th:text="${p.pending()}">0</td>
+            <td class="text-end fw-semibold text-success" th:text="${p.completed()}">0</td>
+            <td><div th:replace="~{fragments/components :: completion(${p})}"></div></td>
+            <td><span th:replace="~{fragments/components :: rating(${p.averageRating()}, ${p.ratingCount()})}"></span></td>
+            <td th:if="${removeFromDepartmentId != null}" class="text-end">
+                <form th:action="@{/admin/departments/{d}/agents/{a}/remove(d=${removeFromDepartmentId}, a=${p.agentId()})}"
+                      method="post" class="d-inline"
+                      th:with="warn=${p.pending() > 0} ? ' Their ' + ${p.pending()} + ' pending ticket(s) will go back to the queue.' : ''"
+                      th:attr="data-confirm='Remove ' + ${p.fullName()} + ' from this department?' + ${warn}">
+                    <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-person-dash"></i> Remove</button>
+                </form>
+            </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(rows)}">
+            <td colspan="8" class="text-center text-muted py-4">No agents yet.</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Collapsible "new agent" form. action: POST URL; departments: list or null (to hide the selector); open: show on load -->
+<div th:fragment="newAgentForm(action, departments, open)" class="collapse" id="newAgentForm"
+     th:classappend="${open} ? 'show'">
+    <div class="card card-body mb-4">
+        <h3 class="h6 mb-3">New agent</h3>
+        <form th:action="${action}" th:object="${agentForm}" method="post" class="row g-3" novalidate>
+            <th:block th:replace="~{fragments/forms :: accountFields}"></th:block>
+            <div class="col-md-6" th:if="${departments != null}">
+                <label for="departmentId" class="form-label">Department</label>
+                <select th:field="*{departmentId}" class="form-select">
+                    <option value="">No department yet</option>
+                    <option th:each="d : ${departments}" th:value="${d.id}" th:text="${d.name}">Dept</option>
+                </select>
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary"><i class="bi bi-person-plus"></i> Create agent</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Compact ticket list (List<Ticket>) used on the agent profile -->
+<div th:fragment="ticketTable(list)" class="table-responsive">
+    <table class="table table-hover mb-0">
+        <thead><tr><th>#</th><th>Title</th><th>Customer</th><th>Priority</th><th>Status</th><th>Updated</th></tr></thead>
+        <tbody>
+        <tr th:each="t : ${list}">
+            <td th:text="${t.id}">1</td>
+            <td><a th:href="@{/admin/tickets/{id}(id=${t.id})}" th:text="${t.title}">Title</a></td>
+            <td th:text="${t.customer.fullName}">Customer</td>
+            <td><span th:replace="~{fragments/components :: priority(${t.priority})}"></span></td>
+            <td><span th:replace="~{fragments/components :: status(${t.status})}"></span></td>
+            <td th:text="${#temporals.format(t.updatedAt, 'dd MMM, HH:mm')}">date</td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(list)}"><td colspan="6" class="text-center text-muted py-3">None</td></tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

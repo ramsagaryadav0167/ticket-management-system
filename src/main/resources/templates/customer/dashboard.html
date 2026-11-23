@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head><title>My tickets</title></head>
+<body>
+<h1 layout:fragment="page-title">My tickets</h1>
+<div layout:fragment="content">
+
+    <div class="row g-3 mb-4">
+        <div class="col-sm-4"><div th:replace="~{fragments/components :: stat('Open', ${openCount}, 'hourglass-split', 'text-primary')}"></div></div>
+        <div class="col-sm-4"><div th:replace="~{fragments/components :: stat('Awaiting your rating', ${resolvedCount}, 'star', 'text-warning')}"></div></div>
+        <div class="col-sm-4"><div th:replace="~{fragments/components :: stat('Closed', ${closedCount}, 'check2-circle', 'text-success')}"></div></div>
+    </div>
+
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span>Your support requests</span>
+            <a th:href="@{/customer/tickets/new}" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg"></i> New ticket</a>
+        </div>
+        <div class="table-responsive" th:unless="${#lists.isEmpty(tickets)}">
+            <table class="table table-hover mb-0">
+                <thead><tr><th>#</th><th>Title</th><th>Department</th><th>Priority</th><th>Status</th><th>Agent</th><th>Created</th></tr></thead>
+                <tbody>
+                <tr th:each="t : ${tickets}">
+                    <td th:text="${t.id}">1</td>
+                    <td><a th:href="@{/customer/tickets/{id}(id=${t.id})}" th:text="${t.title}">Title</a></td>
+                    <td th:text="${t.department.name}">IT</td>
+                    <td><span th:replace="~{fragments/components :: priority(${t.priority})}"></span></td>
+                    <td>
+                        <span th:replace="~{fragments/components :: status(${t.status})}"></span>
+                        <span th:if="${t.status.name() == 'RESOLVED'}" class="badge text-bg-warning ms-1">Rate now</span>
+                    </td>
+                    <td th:text="${t.agent != null} ? ${t.agent.fullName} : 'Waiting for assignment'">Agent</td>
+                    <td th:text="${#temporals.format(t.createdAt, 'dd MMM yyyy')}">01 Jan 2026</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="card-body text-center text-muted py-5" th:if="${#lists.isEmpty(tickets)}">
+            <i class="bi bi-inbox display-6"></i>
+            <p class="mt-2 mb-3">You haven't raised any tickets yet.</p>
+            <a th:href="@{/customer/tickets/new}" class="btn btn-primary">Raise your first ticket</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

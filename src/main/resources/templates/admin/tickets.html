@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head><title>All tickets</title></head>
+<body>
+<h1 layout:fragment="page-title">All tickets</h1>
+<div layout:fragment="content">
+
+    <form th:action="@{/admin/tickets}" method="get" class="card card-body mb-4">
+        <div class="row g-2 align-items-end">
+            <div class="col-md-3">
+                <label for="q" class="form-label small text-muted mb-1">Search title</label>
+                <input id="q" name="q" th:value="${q}" class="form-control form-control-sm" placeholder="e.g. VPN">
+            </div>
+            <div class="col-md-2">
+                <label for="status" class="form-label small text-muted mb-1">Status</label>
+                <select id="status" name="status" class="form-select form-select-sm">
+                    <option value="">Any</option>
+                    <option th:each="s : ${statuses}" th:value="${s}" th:text="${s.label()}" th:selected="${s == status}">OPEN</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="departmentId" class="form-label small text-muted mb-1">Department</label>
+                <select id="departmentId" name="departmentId" class="form-select form-select-sm">
+                    <option value="">All departments</option>
+                    <option th:each="d : ${departments}" th:value="${d.id}" th:text="${d.name}" th:selected="${d.id == departmentId}">Dept</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="agentId" class="form-label small text-muted mb-1">Agent</label>
+                <select id="agentId" name="agentId" class="form-select form-select-sm">
+                    <option value="">All agents</option>
+                    <option th:each="a : ${agents}" th:value="${a.id}" th:text="${a.fullName}" th:selected="${a.id == agentId}">Agent</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex gap-2">
+                <button type="submit" class="btn btn-sm btn-primary flex-grow-1"><i class="bi bi-funnel"></i> Filter</button>
+                <a th:href="@{/admin/tickets}" class="btn btn-sm btn-outline-secondary" title="Clear filters"><i class="bi bi-x-lg"></i></a>
+            </div>
+        </div>
+    </form>
+
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span th:text="${page.totalElements} + ' ticket(s)'">0 tickets</span>
+            <div th:replace="~{fragments/components :: pager(${page}, ${filterUrl})}"></div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead><tr><th>#</th><th>Title</th><th>Department</th><th>Customer</th><th>Agent</th><th>Priority</th><th>Status</th><th>Created</th></tr></thead>
+                <tbody>
+                <tr th:each="t : ${page.content}">
+                    <td th:text="${t.id}">1</td>
+                    <td><a th:href="@{/admin/tickets/{id}(id=${t.id})}" th:text="${t.title}">Title</a></td>
+                    <td th:text="${t.department.name}">Dept</td>
+                    <td th:text="${t.customer.fullName}">Customer</td>
+                    <td>
+                        <a th:if="${t.agent != null}" th:href="@{/admin/agents/{id}(id=${t.agent.id})}" th:text="${t.agent.fullName}">Agent</a>
+                        <span th:if="${t.agent == null}" class="text-muted fst-italic">Unassigned</span>
+                    </td>
+                    <td><span th:replace="~{fragments/components :: priority(${t.priority})}"></span></td>
+                    <td><span th:replace="~{fragments/components :: status(${t.status})}"></span></td>
+                    <td th:text="${#temporals.format(t.createdAt, 'dd MMM yyyy')}">date</td>
+                </tr>
+                <tr th:if="${page.empty}"><td colspan="8" class="text-center text-muted py-4">No tickets match these filters.</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

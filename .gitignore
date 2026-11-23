@@ -1,0 +1,24 @@
+# Build
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# Local secrets / overrides (never commit real credentials)
+.env
+src/main/resources/application-local.yml
+
+# Logs
+*.log
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+.classpath
+.project
+.settings/
+.factorypath
+.sts4-cache/
+
+# OS
+.DS_Store
+Thumbs.db

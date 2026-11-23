@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head><title>My tickets</title></head>
+<body>
+<h1 layout:fragment="page-title">My tickets</h1>
+<div layout:fragment="content">
+
+    <p class="text-muted mb-3">
+        <i class="bi bi-diagram-3"></i>
+        <span th:if="${agent.department != null}" th:text="${agent.department.name} + ' department'">IT department</span>
+        <span th:if="${agent.department == null}">You are not in a department yet – ask an admin to add you to one.</span>
+    </p>
+
+    <!-- Personal performance -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3"><div th:replace="~{fragments/components :: stat('Assigned', ${stats.assigned()}, 'inbox', 'text-primary')}"></div></div>
+        <div class="col-6 col-md-3"><div th:replace="~{fragments/components :: stat('Pending', ${stats.pending()}, 'hourglass-split', 'text-warning')}"></div></div>
+        <div class="col-6 col-md-3"><div th:replace="~{fragments/components :: stat('Completed', ${stats.completed()}, 'check2-circle', 'text-success')}"></div></div>
+        <div class="col-6 col-md-3">
+            <div class="card stat-card h-100">
+                <div class="label">Rating · completion</div>
+                <div class="value fs-5 mt-1"><span th:replace="~{fragments/components :: rating(${stats.averageRating()}, ${stats.ratingCount()})}"></span></div>
+                <div th:replace="~{fragments/components :: completion(${stats})}"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <ul class="nav nav-tabs card-header-tabs">
+                <li class="nav-item">
+                    <a class="nav-link" th:classappend="${view == 'pending'} ? 'active'" th:href="@{/agent/dashboard(view='pending')}">
+                        Pending <span class="badge text-bg-warning" th:text="${stats.pending()}">0</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:classappend="${view == 'completed'} ? 'active'" th:href="@{/agent/dashboard(view='completed')}">
+                        Completed <span class="badge text-bg-success" th:text="${stats.completed()}">0</span></a>
+                </li>
+            </ul>
+        </div>
+        <div class="table-responsive" th:unless="${#lists.isEmpty(tickets)}">
+            <table class="table table-hover mb-0">
+                <thead><tr><th>#</th><th>Title</th><th>Customer</th><th>Priority</th><th>Status</th><th>Assigned</th></tr></thead>
+                <tbody>
+                <tr th:each="t : ${tickets}">
+                    <td th:text="${t.id}">1</td>
+                    <td><a th:href="@{/agent/tickets/{id}(id=${t.id})}" th:text="${t.title}">Title</a></td>
+                    <td th:text="${t.customer.fullName}">Customer</td>
+                    <td><span th:replace="~{fragments/components :: priority(${t.priority})}"></span></td>
+                    <td><span th:replace="~{fragments/components :: status(${t.status})}"></span></td>
+                    <td th:text="${t.assignedAt != null} ? ${#temporals.format(t.assignedAt, 'dd MMM, HH:mm')} : '–'">date</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="card-body text-center text-muted py-5" th:if="${#lists.isEmpty(tickets)}">
+            <i class="bi bi-emoji-smile display-6"></i>
+            <p class="mt-2 mb-0" th:text="${view == 'pending'} ? 'No pending tickets. Nice work!' : 'No completed tickets yet.'">Empty</p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

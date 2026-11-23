@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<!--
+  Account fields shared by customer sign-up and agent creation.
+  Must be included inside a form with th:object set to a RegisterForm / AgentForm.
+-->
+<th:block th:fragment="accountFields">
+    <div class="col-md-6">
+        <label class="form-label" for="fullName">Full name</label>
+        <input th:field="*{fullName}" class="form-control" th:errorclass="is-invalid" required maxlength="100">
+        <div class="invalid-feedback" th:errors="*{fullName}"></div>
+    </div>
+    <div class="col-md-6">
+        <label class="form-label" for="username">Username</label>
+        <input th:field="*{username}" class="form-control" th:errorclass="is-invalid" required maxlength="50" autocomplete="username">
+        <div class="invalid-feedback" th:errors="*{username}"></div>
+    </div>
+    <div class="col-md-6">
+        <label class="form-label" for="email">Email</label>
+        <input th:field="*{email}" type="email" class="form-control" th:errorclass="is-invalid" required maxlength="150">
+        <div class="invalid-feedback" th:errors="*{email}"></div>
+    </div>
+    <div class="col-md-6">
+        <label class="form-label" for="phone">Phone <span class="text-muted">(optional)</span></label>
+        <input th:field="*{phone}" class="form-control" th:errorclass="is-invalid" maxlength="20">
+        <div class="invalid-feedback" th:errors="*{phone}"></div>
+    </div>
+    <div class="col-12">
+        <label class="form-label" for="password">Password</label>
+        <input th:field="*{password}" type="password" class="form-control" th:errorclass="is-invalid"
+               required minlength="8" maxlength="72" autocomplete="new-password">
+        <div class="form-text">At least 8 characters.</div>
+        <div class="invalid-feedback" th:errors="*{password}"></div>
+    </div>
+</th:block>
+</body>
+</html>

@@ -1,0 +1,144 @@
+/* Ticket Management System – single stylesheet on top of Bootstrap 5 */
+:root {
+    --tms-sidebar-bg: #1e293b;
+    --tms-sidebar-fg: #cbd5e1;
+    --tms-sidebar-active: #3b82f6;
+    --tms-body-bg: #f1f5f9;
+    --tms-sidebar-width: 240px;
+}
+
+body {
+    background: var(--tms-body-bg);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: .925rem;
+}
+
+/* ---------- App shell ---------- */
+.app-shell { display: flex; min-height: 100vh; }
+
+.app-sidebar {
+    width: var(--tms-sidebar-width);
+    flex-shrink: 0;
+    background: var(--tms-sidebar-bg);
+    color: var(--tms-sidebar-fg);
+    display: flex;
+    flex-direction: column;
+}
+.app-sidebar .brand {
+    color: #fff;
+    font-weight: 600;
+    font-size: 1.05rem;
+    padding: 1.1rem 1.25rem;
+    border-bottom: 1px solid rgba(255, 255, 255, .08);
+    text-decoration: none;
+}
+.app-sidebar .nav-section {
+    font-size: .7rem;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: #64748b;
+    padding: 1rem 1.25rem .35rem;
+}
+.app-sidebar .nav-link {
+    color: var(--tms-sidebar-fg);
+    padding: .55rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    border-left: 3px solid transparent;
+}
+.app-sidebar .nav-link:hover { color: #fff; background: rgba(255, 255, 255, .04); }
+.app-sidebar .nav-link.active {
+    color: #fff;
+    background: rgba(59, 130, 246, .12);
+    border-left-color: var(--tms-sidebar-active);
+}
+
+.app-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+
+.app-topbar {
+    background: #fff;
+    border-bottom: 1px solid #e2e8f0;
+    padding: .75rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.app-topbar h1 { font-size: 1.15rem; margin: 0; font-weight: 600; }
+
+.app-content { padding: 1.5rem; flex: 1; }
+
+.avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--tms-sidebar-active);
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: .8rem;
+}
+
+@media (max-width: 991.98px) {
+    .app-shell { flex-direction: column; }
+    .app-sidebar { width: 100%; }
+    .app-sidebar nav { display: flex; flex-wrap: wrap; }
+    .app-sidebar .nav-section { display: none; }
+}
+
+/* ---------- Cards & stats ---------- */
+.card { border: 1px solid #e2e8f0; box-shadow: 0 1px 2px rgba(15, 23, 42, .04); }
+.card-header { background: #fff; font-weight: 600; }
+
+.stat-card { padding: 1rem 1.25rem; }
+.stat-card .label { color: #64748b; font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; }
+.stat-card .value { font-size: 1.75rem; font-weight: 700; line-height: 1.2; }
+.stat-card .icon { font-size: 1.5rem; opacity: .35; }
+
+.table > :not(caption) > * > * { padding: .6rem .75rem; vertical-align: middle; }
+.table thead th { font-size: .75rem; text-transform: uppercase; letter-spacing: .04em; color: #64748b; font-weight: 600; }
+
+/* ---------- Status / priority badges ---------- */
+.badge-status { font-weight: 500; }
+.status-OPEN { background: #e0e7ff; color: #3730a3; }
+.status-ASSIGNED { background: #fef3c7; color: #92400e; }
+.status-IN_PROGRESS { background: #dbeafe; color: #1e40af; }
+.status-RESOLVED { background: #dcfce7; color: #166534; }
+.status-CLOSED { background: #e2e8f0; color: #334155; }
+
+.priority-LOW { color: #64748b; }
+.priority-MEDIUM { color: #2563eb; }
+.priority-HIGH { color: #d97706; }
+.priority-URGENT { color: #dc2626; font-weight: 600; }
+
+/* ---------- Conversation ---------- */
+.conversation { max-height: 460px; overflow-y: auto; }
+.message { max-width: 80%; padding: .6rem .85rem; border-radius: .75rem; margin-bottom: .6rem; }
+.message .meta { font-size: .72rem; opacity: .75; margin-bottom: .15rem; }
+.message.mine { margin-left: auto; background: #2563eb; color: #fff; border-bottom-right-radius: .2rem; }
+.message.theirs { background: #f1f5f9; border-bottom-left-radius: .2rem; }
+.message .body { white-space: pre-wrap; word-break: break-word; }
+
+/* ---------- Timeline ---------- */
+.timeline { list-style: none; padding-left: 0; margin: 0; }
+.timeline li { position: relative; padding: 0 0 .9rem 1.25rem; border-left: 2px solid #e2e8f0; }
+.timeline li:last-child { padding-bottom: 0; }
+.timeline li::before {
+    content: "";
+    position: absolute;
+    left: -6px;
+    top: 4px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #94a3b8;
+}
+
+/* ---------- Auth pages ---------- */
+.auth-wrapper { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+.auth-card { width: 100%; max-width: 440px; }
+
+.description-text { white-space: pre-wrap; }
+.min-w-0 { min-width: 0; }

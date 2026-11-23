@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head><title th:text="${agent.fullName}">Agent</title></head>
+<body>
+<h1 layout:fragment="page-title" th:text="${agent.fullName}">Agent</h1>
+<div layout:fragment="content">
+
+    <a th:href="@{/admin/agents}" class="d-inline-block mb-3 text-decoration-none"><i class="bi bi-arrow-left"></i> All agents</a>
+
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3"><div th:replace="~{fragments/components :: stat('Assigned', ${stats.assigned()}, 'inbox', 'text-primary')}"></div></div>
+        <div class="col-6 col-md-3"><div th:replace="~{fragments/components :: stat('Pending', ${stats.pending()}, 'hourglass-split', 'text-warning')}"></div></div>
+        <div class="col-6 col-md-3"><div th:replace="~{fragments/components :: stat('Completed', ${stats.completed()}, 'check2-circle', 'text-success')}"></div></div>
+        <div class="col-6 col-md-3">
+            <div class="card stat-card h-100">
+                <div class="label">Rating · completion</div>
+                <div class="value fs-5 mt-1"><span th:replace="~{fragments/components :: rating(${stats.averageRating()}, ${stats.ratingCount()})}"></span></div>
+                <div th:replace="~{fragments/components :: completion(${stats})}"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header">Pending tickets <span class="badge text-bg-warning" th:text="${#lists.size(pendingTickets)}">0</span></div>
+                <div th:replace="~{fragments/admin :: ticketTable(${pendingTickets})}"></div>
+            </div>
+            <div class="card">
+                <div class="card-header">Completed tickets <span class="badge text-bg-success" th:text="${#lists.size(completedTickets)}">0</span></div>
+                <div th:replace="~{fragments/admin :: ticketTable(${completedTickets})}"></div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-header">Profile</div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between"><span class="text-muted">Username</span><span th:text="${agent.username}">u</span></li>
+                    <li class="list-group-item d-flex justify-content-between"><span class="text-muted">Email</span><span th:text="${agent.email}">e</span></li>
+                    <li class="list-group-item d-flex justify-content-between"><span class="text-muted">Phone</span><span th:text="${agent.phone} ?: '–'">p</span></li>
+                    <li class="list-group-item d-flex justify-content-between"><span class="text-muted">Status</span>
+                        <span th:if="${agent.enabled}" class="badge text-bg-success">Active</span>
+                        <span th:unless="${agent.enabled}" class="badge text-bg-secondary">Inactive</span></li>
+                </ul>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">Department</div>
+                <div class="card-body">
+                    <form th:action="@{/admin/agents/{id}/department(id=${agent.id})}" method="post" class="vstack gap-2"
+                          th:attr="data-confirm=${stats.pending() > 0} ? 'Changing department returns ' + ${stats.pending()} + ' pending ticket(s) to the current department queue. Continue?' : null">
+                        <input type="hidden" name="returnTo" th:value="'/admin/agents/' + ${agent.id}">
+                        <select name="departmentId" class="form-select" aria-label="Department">
+                            <option value="">No department</option>
+                            <option th:each="d : ${departments}" th:value="${d.id}" th:text="${d.name}"
+                                    th:selected="${agent.department != null and d.id == agent.department.id}">Dept</option>
+                        </select>
+                        <button type="submit" class="btn btn-outline-primary">Move agent</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">Account</div>
+                <div class="card-body">
+                    <form th:action="@{/admin/agents/{id}/enabled(id=${agent.id})}" method="post"
+                          th:attr="data-confirm=${agent.enabled} ? 'Deactivate this agent? They will be signed out of new sessions and their pending tickets return to the queue.' : null">
+                        <input type="hidden" name="enabled" th:value="${!agent.enabled}">
+                        <button type="submit" class="btn w-100"
+                                th:classappend="${agent.enabled} ? 'btn-outline-danger' : 'btn-outline-success'"
+                                th:text="${agent.enabled} ? 'Deactivate agent' : 'Activate agent'">Toggle</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

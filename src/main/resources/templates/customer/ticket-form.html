@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head><title>New ticket</title></head>
+<body>
+<h1 layout:fragment="page-title">New ticket</h1>
+<div layout:fragment="content">
+    <div class="card" style="max-width: 760px;">
+        <div class="card-body p-4">
+            <div th:if="${#lists.isEmpty(departments)}" class="alert alert-warning">
+                No departments are accepting tickets right now. Please try again later.
+            </div>
+            <form th:action="@{/customer/tickets}" th:object="${form}" method="post" class="row g-3" novalidate>
+                <div class="col-md-8">
+                    <label for="departmentId" class="form-label">Department</label>
+                    <select th:field="*{departmentId}" class="form-select" th:errorclass="is-invalid" required>
+                        <option value="">Choose the team that should help you…</option>
+                        <option th:each="d : ${departments}" th:value="${d.id}"
+                                th:text="${d.name} + (${d.description} != null ? ' – ' + ${d.description} : '')">IT</option>
+                    </select>
+                    <div class="invalid-feedback" th:errors="*{departmentId}"></div>
+                </div>
+                <div class="col-md-4">
+                    <label for="priority" class="form-label">Priority</label>
+                    <select th:field="*{priority}" class="form-select">
+                        <option th:each="p : ${priorities}" th:value="${p}"
+                                th:text="${#strings.capitalize(#strings.toLowerCase(p.name()))}">Medium</option>
+                    </select>
+                </div>
+                <div class="col-12">
+                    <label for="title" class="form-label">Subject</label>
+                    <input th:field="*{title}" class="form-control" th:errorclass="is-invalid" maxlength="150" required
+                           placeholder="Short summary of the problem">
+                    <div class="invalid-feedback" th:errors="*{title}"></div>
+                </div>
+                <div class="col-12">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea th:field="*{description}" rows="6" class="form-control" th:errorclass="is-invalid"
+                              maxlength="4000" required
+                              placeholder="What happened, what you expected, and any error messages"></textarea>
+                    <div class="invalid-feedback" th:errors="*{description}"></div>
+                </div>
+                <div class="col-12 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary"><i class="bi bi-send"></i> Submit ticket</button>
+                    <a th:href="@{/customer/dashboard}" class="btn btn-outline-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

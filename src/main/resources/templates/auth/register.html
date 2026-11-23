@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/plain}">
+<head><title>Create account</title></head>
+<body>
+<div layout:fragment="content">
+    <div class="card">
+        <div class="card-body p-4">
+            <h2 class="h5 mb-3">Create a customer account</h2>
+            <form th:action="@{/register}" th:object="${form}" method="post" class="row g-3" novalidate>
+                <th:block th:replace="~{fragments/forms :: accountFields}"></th:block>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary w-100">Create account</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <p class="text-center mt-3 text-muted">Already registered? <a th:href="@{/login}">Sign in</a></p>
+</div>
+</body>
+</html>

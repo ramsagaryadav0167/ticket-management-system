@@ -1,0 +1,67 @@
+# Production defaults. Every environment-specific value comes from an environment variable.
+# Local development: run with the "dev" profile (in-memory H2 database + demo data), see README.
+
+spring:
+  application:
+    name: ticket-management-system
+
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/ticket_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:}
+    hikari:
+      maximum-pool-size: ${DB_POOL_SIZE:10}
+
+  jpa:
+    # Schema is owned by Flyway migrations (src/main/resources/db/migration); Hibernate only checks it.
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc.time_zone: UTC
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+
+  thymeleaf:
+    cache: true
+
+server:
+  port: ${PORT:8080}
+  error:
+    whitelabel:
+      enabled: false
+    include-stacktrace: never
+    include-message: never
+  servlet:
+    session:
+      timeout: 30m
+      cookie:
+        http-only: true
+        secure: ${COOKIE_SECURE:false}   # set true behind HTTPS
+        same-site: lax
+  compression:
+    enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+app:
+  admin:
+    username: ${APP_ADMIN_USERNAME:admin}
+    password: ${APP_ADMIN_PASSWORD:}
+    email: ${APP_ADMIN_EMAIL:admin@railbit.local}
+
+logging:
+  level:
+    root: INFO
+    com.railbit: INFO

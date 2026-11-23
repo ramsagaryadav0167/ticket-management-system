@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head><title>Agents</title></head>
+<body>
+<h1 layout:fragment="page-title">Agents &amp; performance</h1>
+<div layout:fragment="content">
+
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+        <form th:action="@{/admin/agents}" method="get" class="d-flex gap-2">
+            <select name="departmentId" class="form-select form-select-sm w-auto" aria-label="Department filter">
+                <option value="">All departments</option>
+                <option th:each="d : ${departments}" th:value="${d.id}" th:text="${d.name}"
+                        th:selected="${d.id == departmentId}">Dept</option>
+            </select>
+            <button type="submit" class="btn btn-sm btn-outline-primary">Filter</button>
+        </form>
+        <button class="btn btn-sm btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#newAgentForm">
+            <i class="bi bi-person-plus"></i> New agent</button>
+    </div>
+
+    <div th:replace="~{fragments/admin :: newAgentForm(@{/admin/agents}, ${departments}, ${openAgentForm} ?: false)}"></div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-4"><div th:replace="~{fragments/components :: stat('Assigned', ${totals[0]}, 'inbox', 'text-primary')}"></div></div>
+        <div class="col-md-4"><div th:replace="~{fragments/components :: stat('Pending', ${totals[1]}, 'hourglass-split', 'text-warning')}"></div></div>
+        <div class="col-md-4"><div th:replace="~{fragments/components :: stat('Completed', ${totals[2]}, 'check2-circle', 'text-success')}"></div></div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <span th:text="${#lists.size(rows)} + ' agent(s)'">0 agents</span>
+            <small class="text-muted ms-2">Sorted by pending workload</small>
+        </div>
+        <div th:replace="~{fragments/admin :: performanceTable(${rows}, true, null)}"></div>
+    </div>
+</div>
+</body>
+</html>
